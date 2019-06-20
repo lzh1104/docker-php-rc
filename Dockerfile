@@ -4,17 +4,17 @@ WORKDIR /usr/src/myapp
 
 # use mirror tsinghua
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
-    && apk update
-
-RUN set -xe \
-	&& apk add --no-cache --virtual .build-deps \
-		$PHPIZE_DEPS \
-		gd-dev \
-		libpng-dev \
+    && apk update \
+	&& apk add --no-cache gd-dev libpng-dev \
 		libmcrypt-dev \
 		libxml2-dev \
 		imagemagick6-dev \
 		libmemcached-dev \
+
+RUN set -xe \
+	&& apk add --no-cache --virtual .build-deps \
+		$PHPIZE_DEPS \
+		
 	&& export CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
 		LDFLAGS="$PHP_LDFLAGS" \
@@ -37,5 +37,6 @@ RUN set -xe \
     && docker-php-ext-enable mongodb \
     && docker-php-ext-enable swoole \
     && docker-php-ext-enable xdebug \
+    && apk del .build-deps
     && rm /tmp/* -rf
 CMD [ "php", "./index.php" ]
