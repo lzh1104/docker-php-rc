@@ -14,6 +14,7 @@ RUN set -xe \
 		libmcrypt-dev \
 		libxml2-dev \
 		imagemagick6-dev \
+		libmemcached-dev \
 	&& export CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
 		LDFLAGS="$PHP_LDFLAGS" \
