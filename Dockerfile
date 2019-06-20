@@ -9,7 +9,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/re
 		libmcrypt-dev \
 		libxml2-dev \
 		imagemagick6-dev \
-		libmemcached-dev \
+		libmemcached-dev
 
 RUN set -xe \
 	&& apk add --no-cache --virtual .build-deps \
@@ -37,6 +37,6 @@ RUN set -xe \
     && docker-php-ext-enable mongodb \
     && docker-php-ext-enable swoole \
     && docker-php-ext-enable xdebug \
-    && apk del .build-deps
+    && apk del .build-deps \
     && rm /tmp/* -rf
 CMD [ "php", "./index.php" ]
