@@ -1,10 +1,12 @@
 FROM php:7.0-alpine
-COPY . /usr/src/myapp
+
 WORKDIR /usr/src/myapp
+COPY index.php index.php
 
 # use mirror tsinghua
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
-    && apk update \
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
+
+RUN apk update \
 	&& apk add --no-cache gd-dev libpng-dev \
 		libmcrypt-dev \
 		libxml2-dev \
@@ -28,7 +30,7 @@ RUN set -xe \
     && pecl install memcached \
     && pecl install mongodb \
     && pecl install swoole \
-    && pecl install xdebug \
+#   && pecl install xdebug \
     && docker-php-ext-enable redis \
     && docker-php-ext-enable apcu \
     && docker-php-ext-enable gd \
@@ -36,7 +38,12 @@ RUN set -xe \
     && docker-php-ext-enable memcached \
     && docker-php-ext-enable mongodb \
     && docker-php-ext-enable swoole \
-    && docker-php-ext-enable xdebug \
+#   && docker-php-ext-enable xdebug \
     && apk del .build-deps \
     && rm /tmp/* -rf
+
+# install composer
+RUN curl -sS https://getcomposer.org/installer | php \
+    && mv composer.phar /usr/local/bin/composer
+
 CMD [ "php", "./index.php" ]
