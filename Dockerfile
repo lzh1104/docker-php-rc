@@ -46,4 +46,4 @@ RUN set -xe \
 RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer
 
-CMD [ "php", "./index.php" ]
+# CMD [ "php", "./index.php" ]
