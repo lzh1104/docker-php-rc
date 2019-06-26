@@ -11,3 +11,7 @@
 ```
 docker run --it --rm lzh1104:php-rc php -m
 ```
+## timezone
+```
+Asis/Shanghai
+```
