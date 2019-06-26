@@ -1,0 +1,36 @@
+version: '3.3'
+services:
+  web:
+    image: nginx
+    volumes:
+     - ./web:/var/run/web
+     - ./site.conf:/etc/nginx/conf.d/default.conf
+     - ./log:/var/log/nginx
+     - ./phpsocket:/var/run
+    ports:
+     - "80:80"
+    environment:
+     - NGINX_HOST=0.0.0.0
+     - NGINX_PORT=80
+    networks:
+     - code-network
+    depends_on:
+     - php-fpm
+# command: /bin/bash -c "envsubst < /etc/nginx/conf.d/mysite.template > /etc/nginx/conf.d/default.conf && exec nginx -g 'daemon off;'"
+
+  php-fpm:
+    image: lzh1104/php-rc:fpm
+    ports:
+     - "9000:9000"
+    volumes:
+     - ./web:/var/run/web
+     - ./phpsocket:/var/run
+    networks:
+     - code-network
+
+networks:
+    code-network:
+      driver: bridge
+
+volumes:
+    phpsocket:
