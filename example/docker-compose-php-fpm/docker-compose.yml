@@ -24,6 +24,7 @@ services:
      - "9000:9000"
     volumes:
      - ./web:/var/run/web
+     - ./php_env.conf:/usr/local/etc/php-fpm.d/php_env.conf
      - ./phpsocket:/var/run
     networks:
      - code-network
