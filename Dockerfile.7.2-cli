@@ -25,11 +25,10 @@ RUN set -xe \
         LDFLAGS="$PHP_LDFLAGS" \
     && pecl install redis-4.3.0 \
     && pecl install apcu \
-    && docker-php-ext-install bcmath gd mcrypt \
+    && docker-php-ext-install bcmath gd libsodium \
         mysqli pcntl pdo_mysql shmop soap sockets sysvsem xmlrpc opcache zip \
     && docker-php-ext-install gd \
     && pecl install imagick \
-    && docker-php-ext-install mcrypt \
     && pecl install memcached \
     && pecl install mongodb \
     && pecl install protobuf \
