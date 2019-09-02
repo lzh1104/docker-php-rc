@@ -32,6 +32,8 @@ RUN set -xe \
     && docker-php-ext-install mcrypt \
     && pecl install memcached \
     && pecl install mongodb \
+    && pecl install protobuf \
+    && pecl install lua \
     && pecl install swoole \
     && docker-php-ext-enable redis \
     && docker-php-ext-enable apcu \
@@ -39,6 +41,8 @@ RUN set -xe \
     && docker-php-ext-enable imagick \
     && docker-php-ext-enable memcached \
     && docker-php-ext-enable mongodb \
+    && docker-php-ext-enable protobuf \
+    && docker-php-ext-enable lua \
     && docker-php-ext-enable swoole \
     && cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
 #    && cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
