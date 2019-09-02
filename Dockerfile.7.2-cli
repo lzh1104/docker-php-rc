@@ -25,9 +25,10 @@ RUN set -xe \
         LDFLAGS="$PHP_LDFLAGS" \
     && pecl install redis-4.3.0 \
     && pecl install apcu \
-    && docker-php-ext-install bcmath gd libsodium \
+    && docker-php-ext-install bcmath \
         mysqli pcntl pdo_mysql shmop soap sockets sysvsem xmlrpc opcache zip \
-    && docker-php-ext-install gd \
+	&& pecl install gd \
+	&& pecl install libsodium \
     && pecl install imagick \
     && pecl install memcached \
     && pecl install mongodb \
@@ -37,6 +38,7 @@ RUN set -xe \
     && docker-php-ext-enable redis \
     && docker-php-ext-enable apcu \
     && docker-php-ext-enable gd \
+	&& docker-php-ext-enable libsodium \
     && docker-php-ext-enable imagick \
     && docker-php-ext-enable memcached \
     && docker-php-ext-enable mongodb \
