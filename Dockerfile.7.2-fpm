@@ -11,6 +11,7 @@ RUN apk update \
         libxml2-dev \
         imagemagick6-dev \
         libmemcached-dev \
+        libwebp-dev libjpeg-turbo-dev libpng-dev \
         freetype-dev \
         tzdata \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
@@ -27,7 +28,7 @@ RUN set -xe \
     && pecl install apcu \
     && docker-php-ext-install bcmath \
         mysqli pcntl pdo_mysql shmop soap sockets sysvsem xmlrpc opcache zip \
-    && docker-php-ext-install gd \
+    && docker-php-ext-configure gd --with-webp-dir=/usr/include/webp --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-freetype-dir=/usr/include/freetype2 \
     && pecl install imagick \
     && pecl install memcached \
     && pecl install mongodb \
@@ -43,6 +44,15 @@ RUN set -xe \
     && cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
 #   && cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
     && sed -i 's/;date.timezone =/date.timezone = "Asia\/Shanghai"/g' $PHP_INI_DIR/php.ini \
+	\
+	&& runDeps="$( \
+		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
+			| tr ',' '\n' \
+			| sort -u \
+			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+	)" \
+	&& apk add --no-cache --virtual .php-rundeps $runDeps \
+	\
     && apk del .build-deps \
     && rm /tmp/* -rf
 
