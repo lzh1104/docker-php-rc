@@ -1,4 +1,4 @@
-FROM php:7.1-fpm-alpine
+FROM php:7.2-fpm-alpine
 
 # WORKDIR /var/www/html
 
@@ -11,6 +11,7 @@ RUN apk update \
         libxml2-dev \
         imagemagick6-dev \
         libmemcached-dev \
+        freetype-dev \
         tzdata \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
@@ -24,7 +25,7 @@ RUN set -xe \
         LDFLAGS="$PHP_LDFLAGS" \
     && pecl install redis-4.3.0 \
     && pecl install apcu \
-    && docker-php-ext-install bcmath gd \
+    && docker-php-ext-install bcmath \
         mysqli pcntl pdo_mysql shmop soap sockets sysvsem xmlrpc opcache zip \
     && docker-php-ext-install gd \
     && pecl install imagick \
