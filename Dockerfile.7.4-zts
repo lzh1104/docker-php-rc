@@ -1,4 +1,4 @@
-FROM php:7.3-fpm-alpine
+FROM php:7.4-zts-alpine
 
 # WORKDIR /var/www/html
 
@@ -9,7 +9,6 @@ RUN apk update \
     && apk add --no-cache gd-dev libpng-dev \
         libmcrypt-dev \
         libxml2-dev \
-        libzip-dev \
         imagemagick6-dev \
         libmemcached-dev \
         libwebp-dev libjpeg-turbo-dev libpng-dev \
@@ -26,6 +25,7 @@ RUN set -xe \
         CPPFLAGS="$PHP_CPPFLAGS" \
         LDFLAGS="$PHP_LDFLAGS" \
     && pecl install redis-4.3.0 \
+    && pecl install pthreads \
     && pecl install apcu \
     && pecl install protobuf \
     && docker-php-ext-install bcmath \
@@ -36,6 +36,7 @@ RUN set -xe \
     && pecl install mongodb \
     && pecl install xdebug \
     && docker-php-ext-enable redis \
+    && docker-php-ext-enable pthreads \
     && docker-php-ext-enable apcu \
     && docker-php-ext-enable protobuf \
     && docker-php-ext-enable imagick \
