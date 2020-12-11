@@ -24,7 +24,7 @@ RUN set -xe \
     && export CFLAGS="$PHP_CFLAGS" \
         CPPFLAGS="$PHP_CPPFLAGS" \
         LDFLAGS="$PHP_LDFLAGS" \
-    && pecl install redis-4.3.0 \
+    && pecl install redis \
     && pecl install pthreads \
     && pecl install apcu \
     && pecl install protobuf \
