@@ -26,21 +26,21 @@ RUN set -xe \
         LDFLAGS="$PHP_LDFLAGS" \
     && pecl install redis \
     && pecl install apcu \
-    && pecl install protobuf \
+#    && pecl install protobuf \
     && docker-php-ext-install bcmath \
         mysqli pcntl pdo_mysql shmop soap sockets sysvsem xmlrpc opcache zip \
     && docker-php-ext-configure gd --with-webp-dir=/usr/include/webp --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-freetype-dir=/usr/include/freetype2 \
     && pecl install imagick \
     && pecl install memcached \
     && pecl install mongodb \
-    && pecl install xdebug \
+#    && pecl install xdebug \
     && docker-php-ext-enable redis \
     && docker-php-ext-enable apcu \
-    && docker-php-ext-enable protobuf \
+#    && docker-php-ext-enable protobuf \
     && docker-php-ext-enable imagick \
     && docker-php-ext-enable memcached \
     && docker-php-ext-enable mongodb \
-    && docker-php-ext-enable xdebug \
+#    && docker-php-ext-enable xdebug \
 # Chane TimeZone
     && cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
 #   && cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
