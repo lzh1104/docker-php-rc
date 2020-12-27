@@ -28,7 +28,7 @@ RUN set -xe \
         LDFLAGS="$PHP_LDFLAGS" \
     && pecl install redis \
     && pecl install apcu \
-    && pecl install protobuf \
+#    && pecl install protobuf \
     && docker-php-ext-install bcmath \
         mysqli pcntl pdo_mysql shmop soap sockets sysvsem xmlrpc opcache zip \
     && docker-php-ext-configure gd --with-webp-dir=/usr/include/webp --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-freetype-dir=/usr/include/freetype2 \
@@ -40,7 +40,7 @@ RUN set -xe \
     && pecl install phalcon \
     && docker-php-ext-enable redis \
     && docker-php-ext-enable apcu \
-    && docker-php-ext-enable protobuf \
+#    && docker-php-ext-enable protobuf \
     && docker-php-ext-enable imagick \
     && docker-php-ext-enable memcached \
     && docker-php-ext-enable mongodb \
