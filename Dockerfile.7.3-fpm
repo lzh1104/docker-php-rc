@@ -36,18 +36,18 @@ RUN set -xe \
     && pecl install imagick \
     && pecl install memcached \
     && pecl install mongodb \
-    && pecl install xdebug \
-    && pecl install psr \
-    && pecl install phalcon \
+#    && pecl install xdebug \
+#    && pecl install psr \
+#    && pecl install phalcon \
     && docker-php-ext-enable redis \
     && docker-php-ext-enable apcu \
     && docker-php-ext-enable protobuf \
     && docker-php-ext-enable imagick \
     && docker-php-ext-enable memcached \
     && docker-php-ext-enable mongodb \
-    && docker-php-ext-enable xdebug \
-    && docker-php-ext-enable psr \
-    && docker-php-ext-enable phalcon \
+#    && docker-php-ext-enable xdebug \
+#    && docker-php-ext-enable psr \
+#    && docker-php-ext-enable phalcon \
     && cd /tmp && pecl download swoole-4.5.9 && tar xzvf swoole-4.5.9.tgz && cd swoole-4.5.9 && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install && docker-php-ext-enable swoole \
 # Chane TimeZone
     && cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
