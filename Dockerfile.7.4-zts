@@ -14,6 +14,7 @@ RUN apk update \
         libwebp-dev libjpeg-turbo-dev libpng-dev \
         freetype-dev \
         tzdata \
+		zip \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
 
@@ -34,7 +35,6 @@ RUN set -xe \
     && pecl install imagick \
     && pecl install memcached \
     && pecl install mongodb \
-    && pecl install xdebug \
     && docker-php-ext-enable redis \
     && docker-php-ext-enable pthreads \
     && docker-php-ext-enable apcu \
@@ -42,7 +42,7 @@ RUN set -xe \
     && docker-php-ext-enable imagick \
     && docker-php-ext-enable memcached \
     && docker-php-ext-enable mongodb \
-    && docker-php-ext-enable xdebug \
+	&& cd /tmp && wget https://github.com/pmmp/pthreads/archive/fork.zip && uzip fork.zip && cd pthreads-fork && phpize && ./configure && make && make install && docker-php-ext-enable pthreads \
 # Chane TimeZone
     && cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
 #   && cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
