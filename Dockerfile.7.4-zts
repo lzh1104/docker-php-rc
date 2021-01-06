@@ -12,7 +12,7 @@ RUN apk update \
         imagemagick6-dev \
         libmemcached-dev \
         libwebp-dev libjpeg-turbo-dev libpng-dev \
-        freetype-dev \
+        freetype-dev yaml-dev zlib-dev \
         tzdata \
 		zip \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
