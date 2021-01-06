@@ -26,7 +26,6 @@ RUN set -xe \
         CPPFLAGS="$PHP_CPPFLAGS" \
         LDFLAGS="$PHP_LDFLAGS" \
     && pecl install redis \
-    && pecl install pthreads \
     && pecl install apcu \
     && pecl install protobuf \
     && docker-php-ext-install bcmath \
@@ -36,7 +35,6 @@ RUN set -xe \
     && pecl install memcached \
     && pecl install mongodb \
     && docker-php-ext-enable redis \
-    && docker-php-ext-enable pthreads \
     && docker-php-ext-enable apcu \
     && docker-php-ext-enable protobuf \
     && docker-php-ext-enable imagick \
