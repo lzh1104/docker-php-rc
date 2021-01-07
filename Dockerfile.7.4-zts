@@ -14,7 +14,7 @@ RUN apk update \
         libwebp-dev libjpeg-turbo-dev libpng-dev \
         freetype-dev yaml-dev zlib-dev \
         tzdata \
-		zip \
+		libzip \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
 
@@ -29,7 +29,7 @@ RUN set -xe \
     && pecl install apcu \
     && pecl install protobuf \
 	&& pecl install yaml \
-	&& pecl install zlib \
+	&& pecl install zip \
     && docker-php-ext-install bcmath \
         mysqli pcntl pdo_mysql shmop soap sockets sysvsem xmlrpc opcache zip \
     && docker-php-ext-configure gd --with-webp-dir=/usr/include/webp --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-freetype-dir=/usr/include/freetype2 \
@@ -40,7 +40,7 @@ RUN set -xe \
     && docker-php-ext-enable apcu \
     && docker-php-ext-enable protobuf \
 	&& docker-php-ext-enable yaml \
-	&& docker-php-ext-enable zlib \
+	&& docker-php-ext-enable zip \
     && docker-php-ext-enable imagick \
     && docker-php-ext-enable memcached \
     && docker-php-ext-enable mongodb \
