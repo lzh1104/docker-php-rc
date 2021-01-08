@@ -32,7 +32,7 @@ RUN set -xe \
     && docker-php-ext-install mcrypt \
     && pecl install memcached \
     && pecl install mongodb \
-    && pecl install swoole \
+#   && pecl install swoole \
 #   && pecl install xdebug \
     && docker-php-ext-enable redis \
     && docker-php-ext-enable apcu \
@@ -40,7 +40,7 @@ RUN set -xe \
     && docker-php-ext-enable imagick \
     && docker-php-ext-enable memcached \
     && docker-php-ext-enable mongodb \
-    && docker-php-ext-enable swoole \
+#   && docker-php-ext-enable swoole \
 #   && docker-php-ext-enable xdebug \
 # Chane TimeZone   
 #   && cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
