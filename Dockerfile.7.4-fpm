@@ -30,7 +30,7 @@ RUN set -xe \
     && pecl install apcu \
 #    && pecl install protobuf \
     && docker-php-ext-install bcmath \
-        mysqli pcntl pdo_mysql shmop soap sockets sysvsem xmlrpc opcache zip \
+        mysqli pcntl pdo_mysql shmop soap sockets sysvmsg sysvsem sysvshm xmlrpc opcache zip \
     && docker-php-ext-configure gd --with-webp --with-jpeg --with-freetype \
     && docker-php-ext-install gd \
     && pecl install imagick \
