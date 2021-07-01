@@ -3,7 +3,7 @@ FROM php:7.4-fpm-alpine
 # WORKDIR /var/www/html
 
 # use mirror tsinghua
-# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 
 RUN apk update \
     && apk add --no-cache gd-dev libpng-dev \
@@ -26,7 +26,7 @@ RUN set -xe \
     && export CFLAGS="$PHP_CFLAGS" \
         CPPFLAGS="$PHP_CPPFLAGS" \
         LDFLAGS="$PHP_LDFLAGS" \
-    && pecl install redis-5.0.2 \
+    && pecl install redis \
     && pecl install apcu \
 #    && pecl install protobuf \
     && docker-php-ext-install bcmath \

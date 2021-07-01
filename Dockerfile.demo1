@@ -1,0 +1,91 @@
+FROM php:7.4-fpm-alpine3.12
+
+# Locale
+ENV LANG "C.UTF-8"
+ENV LANGUAGE "C.UTF-8"
+ENV LC_ALL "C.UTF-8"
+
+# Dependencies
+RUN set -ex \
+    && apk update \
+    && apk add --no-cache \
+        bash \
+        bash-completion \
+        coreutils \
+        freetype \
+        icu-libs \
+        libbz2 \
+        libcurl \
+        libjpeg-turbo-dev \
+        libmcrypt-dev \
+        libpng \
+        libpq \
+        libxml2 \
+        libxpm-dev \
+        libxslt-dev \
+        libzip-dev \
+        oniguruma \
+        nano \
+        unzip \
+        util-linux \
+        util-linux-bash-completion \
+        wget \
+        zlib \
+        zstd-dev
+
+# User utils
+RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/main >> /etc/apk/repositories
+RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/community/ >> /etc/apk/repositories
+RUN set -ex \
+    && apk update \
+    && apk add --no-cache \
+        runuser \
+        shadow
+
+# Install PHP extensions
+RUN set -ex \
+    && apk add --no-cache --virtual .build-deps \
+        autoconf \
+        bzip2-dev \
+        curl-dev \
+        file \
+        freetype-dev \
+        gcc \
+        git \
+        krb5-dev \
+        krb5-conf \
+        libc-dev \
+        libpng-dev \
+        make \
+        oniguruma-dev \
+        postgresql-dev \
+        zlib-dev \
+    && pecl install apcu igbinary xdebug \
+    && docker-php-ext-enable apcu igbinary xdebug \
+    && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.remote_connect_back=off" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo "xdebug.remote_mode=req" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && yes | pecl install redis \
+    && docker-php-ext-enable redis \
+    && docker-php-ext-configure gd \
+       --with-freetype=/usr/include/ \
+       --with-jpeg=/usr/include/ \
+    && docker-php-ext-configure pgsql -with-pgsql=/usr/include/postgresql/ \
+    && docker-php-ext-install \
+        bcmath \
+        curl \
+        gd \
+        intl \
+        json \
+        mbstring \
+        opcache \
+        pcntl \
+        pgsql \
+        pdo \
+        pdo_pgsql \
+        soap \
+        sockets \
+        xsl \
+        zip \
+    && apk del --no-network .build-deps
