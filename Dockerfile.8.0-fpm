@@ -24,7 +24,7 @@ RUN set -xe \
     && export CFLAGS="$PHP_CFLAGS" \
         CPPFLAGS="$PHP_CPPFLAGS" \
         LDFLAGS="$PHP_LDFLAGS" \
-    && pecl install redis \
+    && pecl install redis-5.0.2 \
     && pecl install apcu \
 #    && pecl install protobuf \
     && docker-php-ext-install bcmath \
