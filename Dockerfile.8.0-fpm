@@ -43,7 +43,7 @@ RUN set -xe \
     && docker-php-ext-enable imagick \
     && docker-php-ext-enable memcached \
     && docker-php-ext-enable mongodb \
-    && cd /tmp && pecl download swoole-4.7.0 && tar xzvf swoole-4.7.0.tgz && cd swoole-4.7.0 && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install && docker-php-ext-enable swoole \
+    && cd /tmp && pecl download swoole-4.8.5 && tar xzvf swoole-4.8.5.tgz && cd swoole-4.8.5 && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install && docker-php-ext-enable swoole \
     && echo "swoole.use_shortname=off" >> /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini \
 # Chane TimeZone
     && cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \

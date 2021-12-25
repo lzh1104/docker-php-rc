@@ -3,7 +3,7 @@ FROM php:7.4-fpm-alpine
 # WORKDIR /var/www/html
 
 # use mirror tsinghua
-# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 
 RUN apk update \
     && apk add --no-cache gd-dev libpng-dev \
@@ -48,7 +48,7 @@ RUN set -xe \
     && docker-php-ext-enable xdebug \
     && docker-php-ext-enable psr \
     && docker-php-ext-enable phalcon \
-    && cd /tmp && pecl download swoole-4.6.7 && tar xzvf swoole-4.6.7.tgz && cd swoole-4.6.7 && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install && docker-php-ext-enable swoole \
+    && cd /tmp && pecl download swoole-4.8.5 && tar xzvf swoole-4.8.5.tgz && cd swoole-4.8.5 && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install && docker-php-ext-enable swoole \
     && echo "swoole.use_shortname=off" >> /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini \
 # Chane TimeZone
     && cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
