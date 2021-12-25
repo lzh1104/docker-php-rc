@@ -14,7 +14,7 @@ RUN apk update \
         imagemagick6-dev \
         libmemcached-dev \
         libwebp-dev libjpeg-turbo-dev libpng-dev \
-        freetype-dev \
+        freetype-dev curl-dev \
         tzdata \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
@@ -43,7 +43,9 @@ RUN set -xe \
     && docker-php-ext-enable imagick \
     && docker-php-ext-enable memcached \
     && docker-php-ext-enable mongodb \
-    && cd /tmp && pecl download swoole-4.8.5 && tar xzvf swoole-4.8.5.tgz && cd swoole-4.8.5 && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install && docker-php-ext-enable swoole \
+    && pecl install --configureoptions 'enable-sockets enable-openssl enable-http2 enable-mysqlnd enable-swoole-json enable-swoole-curl enable-cares' swoole \
+    # && cd /tmp && pecl download swoole-4.8.5 && tar xzvf swoole-4.8.5.tgz && cd swoole-4.8.5 && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install 
+    && docker-php-ext-enable swoole \
     && echo "swoole.use_shortname=off" >> /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini \
 # Chane TimeZone
     && cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
