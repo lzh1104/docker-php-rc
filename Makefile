@@ -26,3 +26,7 @@ test:
 8.0-fpm:
 	$(DOCKERBUILD) -f Dockerfile.8.0-fpm -t $(IMAGES_NAME):8.0-fpm .
 	$(DOCKERPUSH) $(IMAGES_NAME):8.0-fpm
+	
+8.1-fpm:
+	$(DOCKERBUILD) -f Dockerfile.8.1-fpm -t $(IMAGES_NAME):8.1-fpm .
+	$(DOCKERPUSH) $(IMAGES_NAME):8.1-fpm
