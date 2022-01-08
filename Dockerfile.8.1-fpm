@@ -43,7 +43,7 @@ RUN set -xe \
     && docker-php-ext-enable imagick \
     && docker-php-ext-enable memcached \
     && docker-php-ext-enable mongodb \
-    && pecl install --configureoptions 'enable-sockets enable-openssl enable-http2 enable-mysqlnd enable-swoole-json enable-swoole-curl enable-cares' swoole \
+    && pecl install -D 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes"' swoole \
     # && cd /tmp && pecl download swoole-4.8.5 && tar xzvf swoole-4.8.5.tgz && cd swoole-4.8.5 && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install 
     && docker-php-ext-enable swoole \
     && echo "swoole.use_shortname=off" >> /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini \
