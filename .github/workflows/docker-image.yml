@@ -1,3 +1,6 @@
+## https://github.com/docker/build-push-action
+
+
 name: Docker Image CI
 
 on:
@@ -22,11 +25,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
+          
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: Dockerfile.8.0-fpm
+          context: .
+          file: Dockerfile.8.0-fpm
           push: true
           tags: 8.0-fpm
           labels: lzh1104/php-rc
