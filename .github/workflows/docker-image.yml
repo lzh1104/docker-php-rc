@@ -3,20 +3,30 @@ name: Docker Image CI
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
 
 jobs:
 
   build:
 
     runs-on: ubuntu-latest
-
+    permissions:
+      packages: write
+      contents: read
+      
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile.8.0-fpm --tag lzh1104/php-rc:8.0-fpm
-    - name: Login to Registry
-      run: docker login --username=${{ secrets.DOCKER_USERNAME }} --password ${{ secrets.DOCKER_PASSWORD }}
-    - name: Push Image
-      run: docker push lzh1104/php-rc:8.0-fpm
+      - name: Check out the repo
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: Dockerfile.8.0-fpm
+          push: true
+          tags: 8.0-fpm
+          labels: lzh1104/php-rc
