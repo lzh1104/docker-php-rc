@@ -30,6 +30,6 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: .
-          file: Dockerfile.8.0-fpm
+          file: Dockerfile.8.1-fpm
           push: true
-          tags: lzh1104/php-rc:8.0-fpm
+          tags: lzh1104/php-rc:8.1-fpm
