@@ -2,7 +2,7 @@
 
 ## Build Status
 [![Docker Repository on Quay](https://quay.io/repository/lzh1104/php-rc/status "Docker Repository on Quay")](https://quay.io/repository/lzh1104/php-rc)
-
+[![Docker Image CI](https://github.com/lzh1104/docker-php-rc/actions/workflows/docker-image.yml/badge.svg?branch=master)](https://github.com/lzh1104/docker-php-rc/actions/workflows/docker-image.yml)
 ## php version
   `7.0`  `7.3` `7.4`
 ## add ext
