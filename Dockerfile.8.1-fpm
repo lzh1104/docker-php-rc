@@ -16,6 +16,8 @@ RUN apk update \
         libwebp-dev libjpeg-turbo-dev libpng-dev \
         freetype-dev curl-dev \
         tzdata \
+# swoole enable c-ares
+        c-ares-dev \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
 
