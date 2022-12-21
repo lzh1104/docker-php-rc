@@ -30,23 +30,23 @@ RUN set -xe \
         LDFLAGS="$PHP_LDFLAGS" \
     && pecl install redis \
     && pecl install apcu \
-#    && pecl install protobuf \
+    && pecl install protobuf \
     && docker-php-ext-install bcmath \
         mysqli pcntl pdo_mysql shmop soap sockets sysvsem opcache zip \
     && docker-php-ext-configure gd --with-libdir=/usr/include --with-webp --with-jpeg --with-freetype \
-	&& docker-php-ext-install gd \
+    && docker-php-ext-install gd \
     && pecl install imagick \
     && pecl install memcached \
     && pecl install mongodb \
 #    && pecl install xdebug \
     && docker-php-ext-enable redis \
     && docker-php-ext-enable apcu \
-#    && docker-php-ext-enable protobuf \
+    && docker-php-ext-enable protobuf \
     && docker-php-ext-enable imagick \
     && docker-php-ext-enable memcached \
     && docker-php-ext-enable mongodb \
     && pecl install -D 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes"' swoole \
-    # && cd /tmp && pecl download swoole-4.8.5 && tar xzvf swoole-4.8.5.tgz && cd swoole-4.8.5 && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install 
+    # && cd /tmp && pecl download swoole-5.0.1 && tar xzvf swoole-5.0.1.tgz && cd swoole-5.0.1 && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install 
     && docker-php-ext-enable swoole \
     && echo "swoole.use_shortname=off" >> /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini \
 # Chane TimeZone
