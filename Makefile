@@ -30,3 +30,7 @@ test:
 8.1-fpm:
 	$(DOCKERBUILD) -f Dockerfile.8.1-fpm -t $(IMAGES_NAME):8.1-fpm .
 	$(DOCKERPUSH) $(IMAGES_NAME):8.1-fpm
+	
+8.2-fpm:
+	$(DOCKERBUILD) --build-arg SWOOLE_VERSION=5.0.1 --build-arg SWOW_VERSION=1.1.0 --build-arg USE_SWOW=swow -f Dockerfile.8.2-fpm -t $(IMAGES_NAME):8.2-fpm .
+	$(DOCKERPUSH) $(IMAGES_NAME):8.2-fpm
