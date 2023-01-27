@@ -52,12 +52,13 @@ RUN set -xe \
     # && cd /tmp && pecl download swoole-5.0.1 && tar xzvf swoole-5.0.1.tgz && cd swoole-5.0.1 && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install 
     && docker-php-ext-enable swoole \
     && echo "swoole.use_shortname=off" >> /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
-# https://github.com/swow/swow
-    curl -o swow.tar.gz -fL "https://github.com/swow/swow/archive/refs/tags/v1.1.0.tar.gz"; \
-    tar -xzf swow.tar.gz -C /tmp/; \
-    rm swow.tar.gz; \
-    cd /tmp/swow-1.1.0/ext && phpize && ./configure && make && make install; \
-    docker-php-ext-enable swow; \
+# https://github.com/swow/swow 
+# swow 和 swoole 不能共存
+#    curl -o swow.tar.gz -fL "https://github.com/swow/swow/archive/refs/tags/v1.1.0.tar.gz"; \
+#    tar -xzf swow.tar.gz -C /tmp/; \
+#    rm swow.tar.gz; \
+#    cd /tmp/swow-1.1.0/ext && phpize && ./configure && make && make install; \
+#    docker-php-ext-enable swow; \
 # Chane TimeZone
     cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini; \
 #   && cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
