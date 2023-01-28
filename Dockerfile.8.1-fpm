@@ -7,8 +7,16 @@ LABEL maintainer="lzh1104 <wwwlzhcom@163.com>"
 # use mirror tsinghua
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 
-RUN apk update \
-    && apk add --no-cache gd-dev libpng-dev \
+RUN set -eux; \
+    apk update; \
+    apk add --no-cache tzdata; \
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
+    echo "Asia/Shanghai" > /etc/timezone
+
+RUN set -eux; \
+    apk add --no-cache --virtual .build-deps \
+        $PHPIZE_DEPS \
+        gd-dev libpng-dev \
         openssl-dev \
         libmcrypt-dev \
         libxml2-dev \
@@ -17,41 +25,31 @@ RUN apk update \
         libmemcached-dev \
         libwebp-dev libjpeg-turbo-dev libpng-dev \
         freetype-dev curl-dev \
-        tzdata \
 # swoole enable c-ares
         c-ares-dev \
-    && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-    && echo "Asia/Shanghai" > /etc/timezone
-
-RUN set -xe \
-    && apk add --no-cache --virtual .build-deps \
-        $PHPIZE_DEPS \
-        
-    && export CFLAGS="$PHP_CFLAGS" \
+    ; \
+    export CFLAGS="$PHP_CFLAGS" \
         CPPFLAGS="$PHP_CPPFLAGS" \
         LDFLAGS="$PHP_LDFLAGS" \
-    && pecl install redis \
-    && pecl install apcu \
-    && pecl install protobuf \
-    && docker-php-ext-install bcmath \
-        mysqli pcntl pdo_mysql shmop soap sockets sysvsem opcache zip \
-    && docker-php-ext-configure gd --with-libdir=/usr/include --with-webp --with-jpeg --with-freetype \
-    && docker-php-ext-install gd \
-    && pecl install imagick \
-    && pecl install memcached \
-    && pecl install mongodb \
-#    && pecl install xdebug \
-    && docker-php-ext-enable redis \
-    && docker-php-ext-enable apcu \
-    && docker-php-ext-enable protobuf \
+    ; \   
+    pecl install redis; \
+    pecl install apcu; \
+    pecl install protobuf; \
+    docker-php-ext-install bcmath \
+        mysqli pcntl pdo_mysql shmop soap sockets sysvsem opcache zip; \
+    docker-php-ext-configure gd --with-libdir=/usr/include --with-webp --with-jpeg --with-freetype; \
+    docker-php-ext-install gd; \
+    pecl install imagick; \
+    pecl install memcached; \
+    pecl install mongodb; \
+#    pecl install xdebug \
+    docker-php-ext-enable redis apcu protobuf; \
 # https://pecl.php.net/package/imagick
-    && docker-php-ext-enable imagick \
-    && docker-php-ext-enable memcached \
-    && docker-php-ext-enable mongodb \
-    && pecl install -D 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes"' swoole \
+    docker-php-ext-enable imagick memcached mongodb; \
+    pecl install -D 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes"' swoole; \
     # && cd /tmp && pecl download swoole-5.0.1 && tar xzvf swoole-5.0.1.tgz && cd swoole-5.0.1 && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install 
-    && docker-php-ext-enable swoole \
-    && echo "swoole.use_shortname=off" >> /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
+    docker-php-ext-enable swoole; \
+    echo "swoole.use_shortname=off" >> /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
 # https://github.com/swow/swow 
 # swow 和 swoole 不能共存
 #    curl -o swow.tar.gz -fL "https://github.com/swow/swow/archive/refs/tags/v1.1.0.tar.gz"; \

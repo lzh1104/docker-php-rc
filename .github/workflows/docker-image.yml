@@ -30,11 +30,7 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: .
-          file: Dockerfile.8.2-fpm
+          file: Dockerfile.8.1-fpm
           push: true
-          tags: lzh1104/php-rc:8.2-fpm
-          build-args: |
-            SWOOLE_VERSION=5.0.1
-            SWOW_VERSION=1.1.0
-            USE_SWOW=swow
+          tags: lzh1104/php-rc:8.1-fpm
          
