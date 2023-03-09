@@ -27,10 +27,10 @@ RUN set -xe \
     && docker-php-ext-install bcmath gd mcrypt \
         mysqli pcntl pdo_mysql shmop soap sockets sysvsem xmlrpc opcache zip \
     && docker-php-ext-install gd \
-    && pecl install imagick \
+    && pecl install imagick-3.7.0 \
     && docker-php-ext-install mcrypt \
-    && pecl install memcached \
-    && pecl install mongodb \
+    && pecl install memcached-3.2.0 \
+    && pecl install mongodb-1.9.2 \
     && pecl install xdebug-2.8.1 \
     && docker-php-ext-enable redis \
     && docker-php-ext-enable apcu \
