@@ -1,7 +1,7 @@
 ## https://github.com/docker/build-push-action
 
 
-name: php 8.2
+name: php 8.1 - only x86_64
 
 ## 手动调度
 on: workflow_dispatch
