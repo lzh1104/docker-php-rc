@@ -16,7 +16,7 @@ RUN set -eux; \
 RUN set -eux; \
     apk add --no-cache --virtual .build-deps \
         $PHPIZE_DEPS \
-        gd-dev libpng-dev \
+        libavif-dev gd-dev libpng-dev \
         openssl-dev \
         libmcrypt-dev \
         libxml2-dev \
@@ -37,7 +37,7 @@ RUN set -eux; \
     pecl install protobuf; \
     docker-php-ext-install bcmath \
         mysqli pcntl pdo_mysql shmop soap sockets sysvsem opcache zip; \
-    docker-php-ext-configure gd --with-libdir=/usr/include --with-webp --with-jpeg --with-freetype; \
+    docker-php-ext-configure gd --with-libdir=/usr/include --with-avif --with-webp --with-jpeg --with-freetype; \
     docker-php-ext-install gd; \
     pecl install imagick; \
     pecl install memcached; \
