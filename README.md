@@ -5,16 +5,23 @@
 [![php 8.1](https://github.com/lzh1104/docker-php-rc/actions/workflows/master.yml/badge.svg)](https://github.com/lzh1104/docker-php-rc/actions/workflows/master.yml)
 ## php version
   `7.0`  `8.1`
+
 ## add ext
 `apcu` `bcmath` `gd` `imagick` `mcrypt` `pcntl` `pdo_mysql` `mysqli` `shmop` `soap`
 `sockets` `sysvsem` `xmlrpc` `opcache` ` zip`
  `redis` `memcached` `mongodb` `swoole`
+
 ## add
 `composer`
+
+## build
+`sudo docker build -t lzh1104/php-rc:8.2-fpm-sqlsrv -f Dockerfile.8.2-fpm-sqlsrv --build-arg USE_CHINA=tuna .`
+
 ## run
 ```
 docker run --it --rm lzh1104/php-rc:8.1-fpm php -m
 ```
+
 ## timezone
 ```
 Asis/Shanghai

@@ -2,21 +2,27 @@ FROM php:8.2-fpm-alpine3.17
 
 LABEL maintainer="lzh1104 <wwwlzhcom@163.com>"
 
-# WORKDIR /var/www/html
-
-# use mirror tsinghua
-# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
-
 ARG SWOOLE_VERSION
 ARG SWOW_VERSION
 ARG USE_SWOW
+ARG USE_CHINA
 
 ENV SWOOLE_V=${SWOOLE_VERSION:-5.0.1}
 ENV SWOW_V=${SWOW_VERSION:-1.1.0}
-ENV USE_SWOW_E=${USE_SWOW:+swoole}
+ENV USE_SWOW_E=${USE_SWOW:-swoole}
+ENV USE_CHINA_E=${USE_CHINA:+tuna}
+
+# WORKDIR /var/www/html
+
+# use mirror tsinghua
+RUN set -eux; \
+    if [ "$USE_CHINA_E" == "tuna" ]; then \
+        sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories; \
+    fi; \
+    echo $USE_CHINA_E
 
 RUN apk update \
-    && apk add --no-cache tzdata gpg gpg-agent \
+    && apk add --no-cache tzdata gpg gpg-agent unixodbc-dev \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
 
