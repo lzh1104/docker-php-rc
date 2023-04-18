@@ -13,10 +13,10 @@ ARG USE_SWOW
 
 ENV SWOOLE_V=${SWOOLE_VERSION:-5.0.1}
 ENV SWOW_V=${SWOW_VERSION:-1.1.0}
-ENV USE_SWOW_E=${USE_SWOW:+swow}
+ENV USE_SWOW_E=${USE_SWOW:+swoole}
 
 RUN apk update \
-    && apk add --no-cache tzdata \
+    && apk add --no-cache tzdata gpg gpg-agent \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
 
