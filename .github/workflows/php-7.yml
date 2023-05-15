@@ -1,7 +1,7 @@
 ## https://github.com/docker/build-push-action
 
 
-name: php 7 latest
+name: php 7 fpm
 
 ## 手动调度
 on: workflow_dispatch
@@ -35,5 +35,5 @@ jobs:
           context: .
           file: Dockerfile.fpm
           push: true
-          tags: lzh1104/php-rc
+          tags: lzh1104/php-rc:7.0-fpm
          
