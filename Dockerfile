@@ -12,6 +12,8 @@ RUN apk update \
         libxml2-dev \
         imagemagick6-dev \
         libmemcached-dev \
+		libwebp-dev libjpeg-turbo-dev libpng-dev \
+        freetype-dev curl-dev \
         tzdata \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
@@ -25,9 +27,10 @@ RUN set -xe \
         LDFLAGS="$PHP_LDFLAGS" \
     && pecl install redis \
     && pecl install apcu \
-    && docker-php-ext-install bcmath gd mcrypt \
+    && docker-php-ext-install bcmath mcrypt \
         mysqli pcntl pdo_mysql shmop soap sockets sysvsem xmlrpc opcache zip \
-    && docker-php-ext-install gd \
+    && docker-php-ext-configure gd --with-libdir=/usr/include --with-webp --with-jpeg --with-freetype \
+	&& docker-php-ext-install gd \
     && pecl install imagick \
     && docker-php-ext-install mcrypt \
     && pecl install memcached \
