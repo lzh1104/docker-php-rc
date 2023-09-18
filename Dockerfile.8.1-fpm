@@ -16,7 +16,7 @@ RUN set -eux; \
 RUN set -eux; \
     apk add --no-cache --virtual .build-deps \
         $PHPIZE_DEPS \
-        libavif-dev gd-dev libpng-dev \
+        libavif-dev gd-dev libpng-dev linux-headers \
         openssl-dev \
         libmcrypt-dev \
         libxml2-dev \
@@ -44,7 +44,7 @@ RUN set -eux; \
     pecl install memcached; \
     pecl install mongodb; \
 #    pecl install xdebug \
-    docker-php-ext-enable redis apcu protobuf; \
+    docker-php-ext-enable redis apcu protobuf grpc; \
 # https://pecl.php.net/package/imagick
     docker-php-ext-enable imagick memcached mongodb; \
     pecl install -D 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes"' swoole; \
