@@ -50,5 +50,6 @@ RUN set -xe \
     && rm /tmp/* -rf
 
 # install composer
+# wget https://getcomposer.org/download/2.1.14/composer.phar
 RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer
