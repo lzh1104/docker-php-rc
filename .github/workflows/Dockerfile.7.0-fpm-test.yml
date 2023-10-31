@@ -1,7 +1,7 @@
 ## https://github.com/docker/build-push-action
 
 
-name: 7.0 fpm wkhtmltox
+name: php 7.0 fpm wkhtmltox test
 
 ## 手动调度
 on: workflow_dispatch
@@ -41,9 +41,9 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: Dockerfile.7.0-fpm-wkhtmltox
+          file: Dockerfile.7.0-fpm-test
           push: true
           tags: |
-            lzh1104/php-rc:7.0-fpm-wkhtmltox
-            ghcr.io/lzh1104/php-rc:7.0-fpm-wkhtmltox
+            lzh1104/php-rc:7.0-fpm-test
+            ghcr.io/lzh1104/php-rc:7.0-fpm-test
          

@@ -1,0 +1,67 @@
+
+# Image
+FROM lzh1104/php-rc:test2 as builder
+
+### product
+
+FROM php:7.0-fpm-alpine
+
+# WORKDIR /var/www/html
+
+# use mirror tsinghua
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+
+RUN apk update \
+    && apk add --no-cache gd-dev libpng-dev \
+        libmcrypt-dev \
+        libxml2-dev \
+        imagemagick6-dev \
+        libmemcached-dev \
+		libwebp-dev libjpeg-turbo-dev libpng-dev libxpm-dev \
+        freetype-dev curl-dev \
+        tzdata \
+		libstdc++ \
+		libx11 \
+		libxrender \
+		libxext \
+		libssl1.0 \
+		ca-certificates \
+		fontconfig \
+		freetype \
+		ttf-dejavu \
+		ttf-droid \
+		ttf-freefont \
+		ttf-liberation \
+		ttf-ubuntu-font-family \
+    && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && echo "Asia/Shanghai" > /etc/timezone
+
+COPY --from=builder /include/wkhtmltox/* /include/wkhtmltox/
+COPY --from=builder /bin/wkhtmltopdf /bin/wkhtmltopdf
+COPY --from=builder /bin/wkhtmltoimage /bin/wkhtmltoimage
+COPY --from=builder /lib/libwkhtmltox* /lib/
+
+RUN set -xe \
+    && apk add --no-cache --virtual .build-deps \
+        $PHPIZE_DEPS \
+		git \
+    && export CFLAGS="$PHP_CFLAGS" \
+        CPPFLAGS="$PHP_CPPFLAGS" \
+        LDFLAGS="$PHP_LDFLAGS" \
+	&& pear update-channels \
+	&& pecl update-channels \
+	&& cd /tmp \
+	&& git clone https://github.com/krakjoe/wkhtmltox \
+	&& cd wkhtmltox && phpize && ./configure --with-wkhtmltox=/usr && make && make install \
+	&& docker-php-ext-enable wkhtmltox \
+# Chane TimeZone
+    && cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
+#   && cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
+    && sed -i 's/;date.timezone =/date.timezone = "Asia\/Shanghai"/g' $PHP_INI_DIR/php.ini \
+    && apk del .build-deps \
+    && rm /tmp/* -rf
+
+# install composer
+# wget https://getcomposer.org/download/2.1.14/composer.phar
+RUN curl -sS https://getcomposer.org/installer | php \
+    && mv composer.phar /usr/local/bin/composer
