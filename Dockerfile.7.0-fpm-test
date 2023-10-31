@@ -36,10 +36,10 @@ RUN apk update \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && echo "Asia/Shanghai" > /etc/timezone
 
-COPY --from=builder /include/wkhtmltox/* /include/wkhtmltox/
-COPY --from=builder /bin/wkhtmltopdf /bin/wkhtmltopdf
-COPY --from=builder /bin/wkhtmltoimage /bin/wkhtmltoimage
-COPY --from=builder /lib/libwkhtmltox* /lib/
+COPY --from=builder /include/wkhtmltox/* /usr/include/wkhtmltox/
+COPY --from=builder /bin/wkhtmltopdf /usr/bin/wkhtmltopdf
+COPY --from=builder /bin/wkhtmltoimage /usr/bin/wkhtmltoimage
+COPY --from=builder /lib/libwkhtmltox* /usr/lib/
 
 RUN set -xe \
     && apk add --no-cache --virtual .build-deps \
