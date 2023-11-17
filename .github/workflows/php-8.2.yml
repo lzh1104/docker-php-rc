@@ -46,4 +46,16 @@ jobs:
           tags: |
             lzh1104/php-rc:8.2-fpm
             registry.cn-hangzhou.aliyuncs.com/lzh1104/php-rc:8.2-fpm
-         
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          build-args: |
+            SWOW_VERSION=1.3.1
+            USE_SWOW=swow
+          context: .
+          file: Dockerfile.8.2-fpm
+          push: true
+          tags: |
+            lzh1104/php-rc:8.2-fpm-swow
+            registry.cn-hangzhou.aliyuncs.com/lzh1104/php-rc:8.2-fpm-swow
