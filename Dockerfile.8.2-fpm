@@ -36,6 +36,12 @@ RUN set -eux; \
         libwebp-dev libjpeg-turbo-dev libpng-dev \
         freetype-dev curl-dev \
     ; \
+    cd /tmp && \
+    wget https://github.com/emcrisostomo/fswatch/releases/download/1.17.1/fswatch-1.17.1.tar.gz \
+    && tar -xzvf fswatch-1.17.1.tar.gz \
+    && cd fswatch-1.17.1 \
+    && ./configure --prefix=/usr && make && make install \
+    && rm /tmp/fswatch-1.17.1 -rf; \
     export CFLAGS="$PHP_CFLAGS" \
         CPPFLAGS="$PHP_CPPFLAGS" \
         LDFLAGS="$PHP_LDFLAGS" \
