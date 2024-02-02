@@ -16,7 +16,6 @@ ENV USE_SWOW_E=${USE_SWOW:+swow}
 
 RUN set -eux; \
 	\
-	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		libmagick++-dev \
@@ -32,12 +31,7 @@ RUN set -eux; \
         	libwebp-dev libjpeg-dev \
         	libfreetype-dev libcurl4-openssl-dev; \
     	\
-	rm -rf /var/lib/apt/lists/*; \
-	
-	\
-	apt-mark auto '.*' > /dev/null; \
-	apt-mark manual $savedAptMark > /dev/null; \
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+	rm -rf /var/lib/apt/lists/*
 
 RUN set -eux; \
     \
