@@ -15,6 +15,31 @@ ENV SWOW_V=${SWOW_VERSION:-1.4.1}
 ENV USE_SWOW_E=${USE_SWOW:+swow}
 
 RUN set -eux; \
+	\
+	savedAptMark="$(apt-mark showmanual)"; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		libmagick++-dev \
+        	libssl-dev \
+	# swoole enable c-ares
+        	libc-ares-dev \
+        	libmcrypt-dev \
+        	libxml2-dev \
+        	libzip-dev \
+        	libmemcached-dev \
+        	libsqlite3-dev \
+        	libavif-dev libgd-dev libpng-dev \
+        	libwebp-dev libjpeg-dev \
+        	libfreetype-dev libcurl4-openssl-dev; \
+    	\
+	rm -rf /var/lib/apt/lists/*; \
+	
+	\
+	apt-mark auto '.*' > /dev/null; \
+	apt-mark manual $savedAptMark > /dev/null; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+
+RUN set -eux; \
     \
     savedAptMark="$(apt-mark showmanual)"; \
     apt-get update; \
@@ -24,19 +49,7 @@ RUN set -eux; \
     apt-get install -y --no-install-recommends \
         $PHPIZE_DEPS \
         # linux-headers \
-        libmagick++-dev \
-        libssl-dev \
-# swoole enable c-ares
-        libc-ares-dev \
-        libmcrypt-dev \
-        libxml2-dev \
-        libzip-dev \
-        libmemcached-dev \
-        libsqlite3-dev \
-        libavif-dev libgd-dev libpng-dev \
-        libwebp-dev libjpeg-dev \
-        libfreetype-dev libcurl4-openssl-dev \
-    ; \
+        \
 	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
 	debMultiarch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"; \
     cd /tmp && \
@@ -98,7 +111,10 @@ RUN set -eux; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
-	
+# update pecl channel definitions https://github.com/docker-library/php/issues/443
+	pecl update-channels; \
+	rm -rf /tmp/pear ~/.pearrc; \
+	\
     rm /tmp/* -rf
 
 # install composer
