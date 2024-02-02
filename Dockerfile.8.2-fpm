@@ -32,6 +32,7 @@ RUN set -eux; \
         libxml2-dev \
         libzip-dev \
         libmemcached-dev \
+        libsqlite3-dev \
         libavif-dev libgd-dev libpng-dev \
         libwebp-dev libjpeg-dev \
         libfreetype-dev libcurl4-openssl-dev \
