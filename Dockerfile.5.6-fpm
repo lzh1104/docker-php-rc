@@ -41,7 +41,7 @@ RUN set -xe \
     && docker-php-ext-enable imagick \
 # redis
     && cd /tmp && curl -o redis.tgz http://pecl.php.net/get/redis-4.3.0.tgz \
-    && tar -xzf redis.tar.gz -C /tmp \
+    && tar -xzf redis.tgz -C /tmp \
     && cd /tmp/redis-4.3.0 \
     && phpize \
     && ./configure \
