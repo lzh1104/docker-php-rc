@@ -48,7 +48,7 @@ RUN set -xe \
     && make \
     && make install \
     && rm -rf /tmp/redis* \
-    && ocker-php-ext-enable redis \
+    && docker-php-ext-enable redis \
 # Chane TimeZone
     && cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
 #   && cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
