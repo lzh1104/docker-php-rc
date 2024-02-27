@@ -26,12 +26,14 @@ RUN set -xe \
     && export CFLAGS="$PHP_CFLAGS" \
         CPPFLAGS="$PHP_CPPFLAGS" \
         LDFLAGS="$PHP_LDFLAGS" \
+    && pecl install redis-4.3.0 \
     && docker-php-ext-install bcmath \
         mysqli pcntl pdo_mysql shmop soap sockets sysvsem xmlrpc opcache zip \
     && docker-php-ext-configure gd --with-webp-dir=/usr/include/webp --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-freetype-dir=/usr/include/freetype2 \
     && docker-php-ext-install gd \
     && pecl install imagick \
     && docker-php-ext-enable imagick \
+    && docker-php-ext-enable redis \
 # Chane TimeZone
     && cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
 #   && cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
