@@ -30,7 +30,14 @@ RUN set -xe \
         mysqli pcntl pdo_mysql shmop soap sockets sysvsem xmlrpc opcache zip \
     && docker-php-ext-configure gd --with-webp-dir=/usr/include/webp --with-jpeg-dir=/usr/include --with-png-dir=/usr/include --with-freetype-dir=/usr/include/freetype2 \
     && docker-php-ext-install gd \
-    && pecl install imagick \
+    && curl -o imagick.tgz http://pecl.php.net/get/imagick-3.4.4.tgz \
+    && tar -xzf imagick.tgz -C /tmp \
+    && cd /tmp/imagick-3.4.4 \
+    && phpize \
+    && ./configure \
+    && make \
+    && make install \
+    && rm -rf /tmp/imagick* \   
     && docker-php-ext-enable imagick \
 # redis
     && cd /tmp && curl -o redis.tgz http://pecl.php.net/get/redis-4.3.0.tgz \
