@@ -48,7 +48,7 @@ RUN set -eux; \
     gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
     debMultiarch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"; \
     cd /tmp && \
-    wget https://github.com/emcrisostomo/fswatch/releases/download/1.17.1/fswatch-1.17.1.tar.gz \
+    curl -o fswatch-1.17.1.tar.gz -fL https://github.com/emcrisostomo/fswatch/releases/download/1.17.1/fswatch-1.17.1.tar.gz \
     && tar -xzvf fswatch-1.17.1.tar.gz \
     && cd fswatch-1.17.1 \
     && ./configure --build="$gnuArch" --prefix=/usr && make && make install \
@@ -64,13 +64,13 @@ RUN set -eux; \
         mysqli pcntl pdo_mysql shmop soap sockets sysvsem opcache zip; \
     docker-php-ext-configure gd --with-libdir=/usr/include --with-avif --with-webp --with-jpeg --with-freetype; \
     docker-php-ext-install gd; \
-    pecl install imagick; \
+#    pecl install imagick; \
     pecl install memcached; \
     pecl install mongodb; \
 #    pecl install xdebug; \
     docker-php-ext-enable redis apcu protobuf; \
 # https://pecl.php.net/package/imagick
-    docker-php-ext-enable imagick; \
+#    docker-php-ext-enable imagick; \
     docker-php-ext-enable memcached mongodb; \
 	if [ "$USE_SWOW_E" != "swow" ]; then \
 		pecl install -D 'enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes" enable-swoole-sqlite="yes"' swoole; \
