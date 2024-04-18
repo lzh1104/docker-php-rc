@@ -41,7 +41,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           build-args: |
-            SWOOLE_VERSION=5.1.1
+            SWOOLE_VERSION=5.1.2
           context: .
           file: Dockerfile.8.3-fpm
           push: true
