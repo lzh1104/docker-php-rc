@@ -18,7 +18,7 @@ RUN set -eux; \
 	\
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		libmagick++-dev \
+#		libmagick++-dev \
         	libssl-dev \
 	# swoole enable c-ares
         	libc-ares-dev \
@@ -64,13 +64,13 @@ RUN set -eux; \
         mysqli pcntl pdo_mysql shmop soap sockets sysvsem opcache zip; \
     docker-php-ext-configure gd --with-libdir=/usr/include --with-avif --with-webp --with-jpeg --with-freetype; \
     docker-php-ext-install gd; \
-    pecl install imagick; \
+#    pecl install imagick; \
     pecl install memcached; \
     pecl install mongodb; \
 #    pecl install xdebug; \
     docker-php-ext-enable redis apcu protobuf; \
 # https://pecl.php.net/package/imagick
-    docker-php-ext-enable imagick; \
+#    docker-php-ext-enable imagick; \
     docker-php-ext-enable memcached mongodb; \
 	if [ "$USE_SWOW_E" != "swow" ]; then \
 		pecl install -D 'enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes" enable-swoole-sqlite="yes"' swoole; \
