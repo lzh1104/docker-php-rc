@@ -20,6 +20,7 @@ RUN set -eux; \
 	apt-get install -y --no-install-recommends \
 		libmagick++-dev \
         	libssl-dev \
+			protobuf-compiler \
 	# swoole enable c-ares
         	libc-ares-dev \
         	libmcrypt-dev \
