@@ -30,7 +30,7 @@ RUN set -eux; \
         	libsqlite3-dev \
         	libavif-dev libgd-dev libpng-dev \
         	libwebp-dev libjpeg-dev \
-        	libfreetype-dev libcurl4-openssl-dev; \
+        	libfreetype-dev libcurl4-openssl-dev unzip; \
     	\
 	rm -rf /var/lib/apt/lists/*
 
@@ -62,16 +62,15 @@ RUN set -eux; \
     pecl install apcu; \
     pecl install protobuf; \
     docker-php-ext-install bcmath \
-        mysqli pcntl pdo_mysql shmop soap sockets sysvsem opcache zip; \
+        mysqli pcntl pdo_mysql pgsql pdo_pgsql shmop soap sockets sysvsem opcache zip; \
     docker-php-ext-configure gd --with-libdir=/usr/include --with-avif --with-webp --with-jpeg --with-freetype; \
     docker-php-ext-install gd; \
-    pecl install imagick; \
     pecl install memcached; \
     pecl install mongodb; \
 #    pecl install xdebug; \
     docker-php-ext-enable redis apcu protobuf; \
 # https://pecl.php.net/package/imagick
-    docker-php-ext-enable imagick; \
+	yes '' | pecl install imagick && docker-php-ext-enable imagick; \
     docker-php-ext-enable memcached mongodb; \
 	if [ "$USE_SWOW_E" != "swow" ]; then \
 		pecl install -D 'enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes" enable-swoole-sqlite="yes"' swoole; \
@@ -93,6 +92,8 @@ RUN set -eux; \
 #   && cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
     sed -i 's/;date.timezone =/date.timezone = "Asia\/Shanghai"/g' $PHP_INI_DIR/php.ini; \
 	\
+# delete php source	
+	docker-php-source delete; \
 # reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
 	apt-mark auto '.*' > /dev/null; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
