@@ -30,6 +30,7 @@ RUN set -eux; \
         	libsqlite3-dev \
         	libavif-dev libgd-dev libpng-dev \
         	libwebp-dev libjpeg-dev \
+			libpq-dev \
         	libfreetype-dev libcurl4-openssl-dev unzip; \
     	\
 	rm -rf /var/lib/apt/lists/*
