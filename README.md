@@ -12,6 +12,8 @@
 `sockets` `sysvsem` `xmlrpc` `opcache` ` zip`
  `redis` `memcached` `mongodb` `swoole`
 
+[php -m](phpm.md)
+
 ## add
 `composer`
 
