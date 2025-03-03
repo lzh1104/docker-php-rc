@@ -18,8 +18,14 @@ RUN set -eux; \
 	\
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-#		libmagick++-dev \
+			libvips42 \
+			libffi-dev \
+			libexif-dev \
+			libheif-dev \
         	libssl-dev \
+			zip \
+			unzip \
+			protobuf-compiler \
 	# swoole enable c-ares
         	libc-ares-dev \
         	libmcrypt-dev \
@@ -29,6 +35,7 @@ RUN set -eux; \
         	libsqlite3-dev \
         	libavif-dev libgd-dev libpng-dev \
         	libwebp-dev libjpeg-dev \
+			libpq-dev \
         	libfreetype-dev libcurl4-openssl-dev; \
     	\
 	rm -rf /var/lib/apt/lists/*
@@ -60,14 +67,15 @@ RUN set -eux; \
     pecl install redis; \
     pecl install apcu; \
     pecl install protobuf; \
-    docker-php-ext-install bcmath \
-        mysqli pcntl pdo_mysql shmop soap sockets sysvsem opcache zip; \
+    docker-php-ext-install bcmath exif ffi \
+        mysqli pcntl pdo_mysql pgsql pdo_pgsql shmop soap sockets sysvsem opcache zip; \
     docker-php-ext-configure gd --with-libdir=/usr/include --with-avif --with-webp --with-jpeg --with-freetype; \
     docker-php-ext-install gd; \
 #    pecl install imagick; \
     pecl install memcached; \
     pecl install mongodb; \
 #    pecl install xdebug; \
+	echo "zend.max_allowed_stack_size=-1\nffi.enable=true" > /usr/local/etc/php/conf.d/10-ffi.ini; \
     docker-php-ext-enable redis apcu protobuf; \
 # https://pecl.php.net/package/imagick
 #    docker-php-ext-enable imagick; \
@@ -92,6 +100,8 @@ RUN set -eux; \
 #   && cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
     sed -i 's/;date.timezone =/date.timezone = "Asia\/Shanghai"/g' $PHP_INI_DIR/php.ini; \
 	\
+# delete php source	
+	docker-php-source delete; \
 # reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
 	apt-mark auto '.*' > /dev/null; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
