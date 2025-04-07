@@ -17,7 +17,7 @@ ENV USE_SWOW_E=${USE_SWOW:+swow}
 RUN set -eux; \
 	\
 	apt-get update; \
-	apt-get install -y --no-install-recommends \
+	apt-get install -y --no-install-recommends procps \
 		libmagick++-dev \
         	libssl-dev \
 			protobuf-compiler \
