@@ -74,8 +74,8 @@ RUN set -eux; \
 	yes '' | pecl install imagick && docker-php-ext-enable imagick; \
     docker-php-ext-enable memcached mongodb; \
 	if [ "$USE_SWOW_E" != "swow" ]; then \
-		pecl install -D 'enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes" enable-swoole-sqlite="yes"' swoole; \
-		# cd /tmp && pecl download "swoole-$SWOW_V" && tar xzvf "swoole-$SWOW_V.tgz" && cd "swoole-$SWOW_V" && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install; \
+		pecl install -D 'enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-pgsql="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes" enable-swoole-sqlite="yes"' swoole-$SWOOLE_V; \
+		# cd /tmp && pecl download "swoole-$SWOOLE_V" && tar xzvf "swoole-$SWOOLE_V.tgz" && cd "swoole-$SWOOLE_V" && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install; \
 		docker-php-ext-enable swoole; \
 		echo "swoole.use_shortname=off" >> /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
 	else \
