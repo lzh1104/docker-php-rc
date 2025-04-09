@@ -1,7 +1,7 @@
 ## https://github.com/docker/build-push-action
 
 
-name: php 8.1 - only x86_64
+name: php 8.4 Swoole ZTS
 
 ## 手动调度
 on: workflow_dispatch
@@ -28,22 +28,21 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      
+
       -
-        name: Login to GitHub Container Registry
+        name: Login to cr.console.aliyun.com
         uses: docker/login-action@v2
         with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
+          registry: registry.cn-hangzhou.aliyuncs.com
+          username: ${{ secrets.DOCKER_ALIYUN_USERNAME }}
+          password: ${{ secrets.DOCKER_ALIYUN_PASSWORD }}
+          
       - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
-          file: Dockerfile.8.1-fpm
+          file: Dockerfile.8.4-zts
           push: true
           tags: |
-            lzh1104/php-rc:8.1-fpm
-            ghcr.io/lzh1104/php-rc:8.1-fpm
-         
+            lzh1104/php-rc:8.4-zts
+            registry.cn-hangzhou.aliyuncs.com/lzh1104/php-rc:8.4-zts

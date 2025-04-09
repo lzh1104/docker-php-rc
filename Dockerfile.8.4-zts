@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-bookworm
+FROM php:8.4-zts-bookworm
 
 LABEL maintainer="lzh1104 <wwwlzhcom@163.com>"
 
@@ -6,6 +6,13 @@ LABEL maintainer="lzh1104 <wwwlzhcom@163.com>"
 
 # use mirror tsinghua
 
+ARG SWOOLE_VERSION
+ARG SWOW_VERSION
+ARG USE_SWOW
+
+ENV SWOOLE_V=${SWOOLE_VERSION:-6.0.2}
+ENV SWOW_V=${SWOW_VERSION:-1.5.3}
+ENV USE_SWOW_E=${USE_SWOW:+swow}
 
 RUN set -eux; \
 	\
@@ -19,7 +26,8 @@ RUN set -eux; \
 			zip \
 			unzip \
 			protobuf-compiler \
-			
+	# swoole enable c-ares
+        	libc-ares-dev \
         	libmcrypt-dev \
         	libxml2-dev \
         	libzip-dev \
@@ -72,7 +80,21 @@ RUN set -eux; \
 # https://pecl.php.net/package/imagick
 #    docker-php-ext-enable imagick; \
     docker-php-ext-enable memcached mongodb; \
+	if [ "$USE_SWOW_E" != "swow" ]; then \
+		pecl install -D 'enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes" enable-swoole-sqlite="yes" enable-swoole-pgsql="yes" enable-swoole-thread="yes" ' swoole; \
+		# cd /tmp && pecl download "swoole-$SWOW_V" && tar xzvf "swoole-$SWOW_V.tgz" && cd "swoole-$SWOW_V" && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install; \
+		docker-php-ext-enable swoole; \
+		echo "swoole.use_shortname=off" >> /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
+	else \
 
+# https://github.com/swow/swow 
+# swow 和 swoole 不能共存
+		curl -o swow.tar.gz -fL "https://github.com/swow/swow/archive/refs/tags/v$SWOW_V.tar.gz"; \
+		tar -xzf swow.tar.gz -C /tmp/; \
+		rm swow.tar.gz; \
+		cd "/tmp/swow-$SWOW_V/ext" && phpize && ./configure && make && make install; \
+		docker-php-ext-enable swow; \
+	fi; \
 # Chane TimeZone
     cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini; \
 #   && cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
@@ -103,3 +125,7 @@ RUN set -eux; \
 # install composer
 RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer && composer config -g repos.packagist composer https://mirrors.tencent.com/composer/
+
+WORKDIR /var/www/html
+
+CMD ["php", "-m"]
