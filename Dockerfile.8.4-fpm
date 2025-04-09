@@ -55,11 +55,11 @@ RUN set -eux; \
     gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
     debMultiarch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"; \
     cd /tmp && \
-    wget https://github.com/emcrisostomo/fswatch/releases/download/1.17.1/fswatch-1.17.1.tar.gz \
-    && tar -xzvf fswatch-1.17.1.tar.gz \
-    && cd fswatch-1.17.1 \
+    wget https://github.com/emcrisostomo/fswatch/releases/download/1.18.3/fswatch-1.18.3.tar.gz \
+    && tar -xzvf fswatch-1.18.3.tar.gz \
+    && cd fswatch-1.18.3 \
     && ./configure --build="$gnuArch" --prefix=/usr && make && make install \
-    && rm /tmp/fswatch-1.17.1 -rf; \
+    && rm /tmp/fswatch-1.18.3 -rf; \
     export CFLAGS="$PHP_CFLAGS" \
         CPPFLAGS="$PHP_CPPFLAGS" \
         LDFLAGS="$PHP_LDFLAGS" \
@@ -81,7 +81,7 @@ RUN set -eux; \
 #    docker-php-ext-enable imagick; \
     docker-php-ext-enable memcached mongodb; \
 	if [ "$USE_SWOW_E" != "swow" ]; then \
-		pecl install -D 'enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes" enable-swoole-sqlite="yes"' swoole; \
+		pecl install -D 'enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes" enable-swoole-sqlite="yes" enable-swoole-pgsql="yes" enable-swoole-thread="yes" ' swoole-$SWOOLE_V; \
 		# cd /tmp && pecl download "swoole-$SWOW_V" && tar xzvf "swoole-$SWOW_V.tgz" && cd "swoole-$SWOW_V" && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install; \
 		docker-php-ext-enable swoole; \
 		echo "swoole.use_shortname=off" >> /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
