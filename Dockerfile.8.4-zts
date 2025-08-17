@@ -126,6 +126,10 @@ RUN set -eux; \
 RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/composer && composer config -g repos.packagist composer https://mirrors.tencent.com/composer/
 
+# install roadrunner
+RUN curl --proto '=https' --tlsv1.2 -sSf  https://raw.githubusercontent.com/roadrunner-server/roadrunner/master/download-latest.sh | sh
+
+
 WORKDIR /var/www/html
 
 CMD ["base"]
