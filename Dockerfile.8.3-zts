@@ -15,8 +15,8 @@ RUN apk update \
         libwebp-dev libjpeg-turbo-dev libpng-dev libavif-dev\
         freetype-dev yaml-dev zlib-dev sqlite-dev \
         tzdata \
-		libzip \
-		unzip zziplib-dev \
+		libzip libzip-dev \
+		unzip \
 		protobuf-c-compiler protobuf-dev \
 		libpq-dev \
     && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
