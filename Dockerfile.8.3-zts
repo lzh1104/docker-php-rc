@@ -37,7 +37,7 @@ RUN set -eux; \
 	pecl install yaml; \
 	pecl install zip; \
     docker-php-ext-install bcmath \
-        mysqli pcntl pdo_mysql pgsql pdo_pgsql shmop soap sockets sysvsem zip; \
+        mysqli pcntl pdo_mysql pgsql pdo_pgsql shmop soap sockets sysvsem opcache zip; \
     docker-php-ext-configure gd --with-libdir=/usr/include --with-avif --with-webp --with-jpeg --with-freetype; \
     pecl install vips; \
     pecl install memcached; \
