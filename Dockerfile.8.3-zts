@@ -16,7 +16,7 @@ RUN set -eux; \
         libwebp-dev libjpeg-turbo-dev libpng-dev libavif-dev\
         freetype-dev yaml-dev zlib-dev sqlite-dev \
         tzdata \
-		libzip libzip-dev libcurl \
+		libzip libzip-dev libcurl curl-dev \
 		unzip \
 		protobuf-c-compiler protobuf-dev \
 		libpq-dev; \
