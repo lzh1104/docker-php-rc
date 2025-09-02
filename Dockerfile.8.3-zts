@@ -3,10 +3,11 @@ FROM php:8.3-zts-alpine
 # WORKDIR /var/www/html
 
 # use mirror tsinghua
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 
-RUN apk update \
-    && apk add --no-cache gd-dev libpng-dev \
+RUN set -eux; \
+	apk update; \
+    apk add --no-cache gd-dev libpng-dev \
 		c-ares c-ares-dev \
 		vips-dev \
         libmcrypt-dev \
@@ -18,54 +19,55 @@ RUN apk update \
 		libzip libzip-dev libcurl \
 		unzip \
 		protobuf-c-compiler protobuf-dev \
-		libpq-dev \
-    && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-    && echo "Asia/Shanghai" > /etc/timezone
+		libpq-dev; \
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
+    echo "Asia/Shanghai" > /etc/timezone
 
-RUN set -xe \
-    && apk add --no-cache --virtual .build-deps \
-        $PHPIZE_DEPS \
+RUN set -eux; \
+    apk add --no-cache --virtual .build-deps $PHPIZE_DEPS; \
         
-    && export CFLAGS="$PHP_CFLAGS" \
+    export \
+		CFLAGS="$PHP_CFLAGS" \
         CPPFLAGS="$PHP_CPPFLAGS" \
         LDFLAGS="$PHP_LDFLAGS" \
-    && pecl install redis \
-    && pecl install apcu \
-    && pecl install protobuf \
-	&& pecl install yaml \
-	&& pecl install zip \
-    && docker-php-ext-install bcmath \
-        mysqli pcntl pdo_mysql pgsql pdo_pgsql shmop soap sockets sysvsem opcache zip \
-    && docker-php-ext-configure gd --with-libdir=/usr/include --with-avif --with-webp --with-jpeg --with-freetype \
-    && pecl install vips \
-    && pecl install memcached \
-    && pecl install mongodb \
-	&& pecl install -D 'enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes" enable-swoole-sqlite="yes" enable-swoole-pgsql="yes" enable-swoole-thread="yes" ' swoole \
-    && docker-php-ext-enable redis \
-    && docker-php-ext-enable apcu \
-    && docker-php-ext-enable protobuf \
-	&& docker-php-ext-enable yaml \
-	&& docker-php-ext-enable zip \
-    && docker-php-ext-enable vips \
-    && docker-php-ext-enable memcached \
-    && docker-php-ext-enable mongodb \
-	&& docker-php-ext-enable swoole \
-	&& echo "swoole.use_shortname=off" >> /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini \
+	; \
+    pecl install redis; \
+    pecl install apcu; \
+    pecl install protobuf; \
+	pecl install yaml; \
+	pecl install zip; \
+    docker-php-ext-install bcmath \
+        mysqli pcntl pdo_mysql pgsql pdo_pgsql shmop soap sockets sysvsem zip; \
+    docker-php-ext-configure gd --with-libdir=/usr/include --with-avif --with-webp --with-jpeg --with-freetype; \
+    pecl install vips; \
+    pecl install memcached; \
+    pecl install mongodb; \
+	pecl install -D 'enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes" enable-swoole-sqlite="yes" enable-swoole-pgsql="yes" enable-swoole-thread="yes" ' swoole; \
+    docker-php-ext-enable redis; \
+    docker-php-ext-enable apcu; \
+    docker-php-ext-enable protobuf; \
+	docker-php-ext-enable yaml; \
+	docker-php-ext-enable zip; \
+    docker-php-ext-enable vips; \
+    docker-php-ext-enable memcached; \
+    docker-php-ext-enable mongodb; \
+	docker-php-ext-enable swoole; \
+	echo "swoole.use_shortname=off" >> /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
 # Chane TimeZone
-    && cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
-#   && cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
-    && sed -i 's/;date.timezone =/date.timezone = "Asia\/Shanghai"/g' $PHP_INI_DIR/php.ini \
+    cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini; \
+#   cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini; \
+    sed -i 's/;date.timezone =/date.timezone = "Asia\/Shanghai"/g' $PHP_INI_DIR/php.ini; \
 	\
-	&& runDeps="$( \
+	runDeps="$( \
 		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local \
 			| tr ',' '\n' \
 			| sort -u \
 			| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-	)" \
-	&& apk add --no-cache --virtual .php-rundeps $runDeps \
+	)"; \
+	apk add --no-cache --virtual .php-rundeps $runDeps; \
 	\
-    && apk del .build-deps \
-    && rm /tmp/* -rf
+    apk del .build-deps; \
+    rm /tmp/* -rf
 
 # install composer
 RUN curl -sS https://getcomposer.org/installer | php \
