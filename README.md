@@ -5,7 +5,7 @@
 [![php 8.2](https://github.com/lzh1104/docker-php-rc/actions/workflows/php-8.2.yml/badge.svg)](https://github.com/lzh1104/docker-php-rc/actions/workflows/php-8.2.yml)
 [![php 8.4](https://github.com/lzh1104/docker-php-rc/actions/workflows/php-8.4.yml/badge.svg)](https://github.com/lzh1104/docker-php-rc/actions/workflows/php-8.4.yml)
 ## php version
-  `7.0`  `8.2`
+  `7.0`  `8.2-fpm` `8.3-zts`
 
 ## add ext
 `apcu` `bcmath` `gd` `imagick` `mcrypt` `pcntl` `pdo_mysql` `mysqli` `shmop` `soap`
