@@ -1,6 +1,6 @@
 
 DOCKERCMD=docker
-DOCKERBUILD=$(DOCKERCMD) build
+DOCKERBUILD=$(DOCKERCMD) buildx build
 DOCKERPUSH=$(DOCKERCMD) push
 IMAGES_NAME=lzh1104/php-rc
 
@@ -34,3 +34,7 @@ test:
 8.2-fpm:
 	$(DOCKERBUILD) --build-arg SWOOLE_VERSION=5.0.1 --build-arg SWOW_VERSION=1.1.0 --build-arg USE_SWOW=swow -f Dockerfile.8.2-fpm -t $(IMAGES_NAME):8.2-fpm .
 	$(DOCKERPUSH) $(IMAGES_NAME):8.2-fpm
+	
+8.3-zts:
+	$(DOCKERBUILD) -f Dockerfile.8.3-zts -t $(IMAGES_NAME):8.3-zts .
+	# $(DOCKERPUSH) $(IMAGES_NAME):8.3-zts

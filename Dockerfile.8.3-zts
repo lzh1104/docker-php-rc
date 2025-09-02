@@ -3,7 +3,7 @@ FROM php:8.3-zts-alpine
 # WORKDIR /var/www/html
 
 # use mirror tsinghua
-# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories \
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 
 RUN apk update \
     && apk add --no-cache gd-dev libpng-dev \
@@ -15,7 +15,7 @@ RUN apk update \
         libwebp-dev libjpeg-turbo-dev libpng-dev libavif-dev\
         freetype-dev yaml-dev zlib-dev sqlite-dev \
         tzdata \
-		libzip libzip-dev \
+		libzip libzip-dev libcurl \
 		unzip \
 		protobuf-c-compiler protobuf-dev \
 		libpq-dev \
