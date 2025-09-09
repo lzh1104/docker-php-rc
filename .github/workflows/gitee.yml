@@ -1,0 +1,22 @@
+name: Sync to Gitee
+
+on:
+  push
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mirror GitHub to Gitee
+        uses: Yikun/hub-mirror-action@v1.5
+        with:
+          src: github/lzh1104
+          dst: gitee/lzh1104_admin
+          force_update: true
+          debug: true
+          dst_key: ${{ secrets.GITEE_SYNC_BOT_PRIVATE_KEY }}
+          dst_token: ${{ secrets.GITEE_SYNC_BOT_TOKEN }}
+          clone_style: "ssh"
+          cache_path: /github/workspace/hub-mirror-cache
+          mappings: "docker-php-rc=>php-rc"
+          static_list: "docker-php-rc"
