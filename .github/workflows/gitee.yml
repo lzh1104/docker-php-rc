@@ -16,7 +16,6 @@ jobs:
           debug: true
           dst_key: ${{ secrets.GITEE_SYNC_BOT_PRIVATE_KEY }}
           dst_token: ${{ secrets.GITEE_SYNC_BOT_TOKEN }}
-          clone_style: "ssh"
           cache_path: /github/workspace/hub-mirror-cache
           mappings: "docker-php-rc=>php-rc"
           static_list: "docker-php-rc"
