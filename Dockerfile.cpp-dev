@@ -2,6 +2,8 @@ FROM mcr.microsoft.com/devcontainers/cpp:dev-debian-13
 
 LABEL maintainer="lzh1104 <wwwlzhcom@163.com>"
 
+RUN apt-get -y install apt-transport-https ca-certificates curl software-properties-common
+
 RUN set -eux; \
 	cp /etc/apt/sources.list /etc/apt/sources.list.bak; \
 	tee /etc/apt/sources.list <<-'EOF'
@@ -20,16 +22,40 @@ RUN set -eux; \
 	deb-src http://mirrors.tencent.com/debian-security trixie-security main contrib non-free non-free-firmware
 	EOF; \
 	
+	curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/debian/gpg | sudo apt-key add -; \
+	add-apt-repository "deb [arch=amd64] https://mirrors.aliyun.com/docker-ce/linux/debian $(lsb_release -cs) stable"
+
 RUN set -eux; \
 	\
 	wget https://dev.mysql.com/get/mysql-apt-config_0.8.29-1_all.deb -O /tmp/mysql-apt-config_all.deb; \
 	DEBIAN_FRONTEND=noninteractive dpkg -i /tmp/mysql-apt-config_all.deb; \
 	apt-get update; \
-	apt-get install -y git make gcc g++ libmysqlclient-dev libssl-dev libbz2-dev libreadline-dev libncurses-dev libboost-all-dev p7zip; \
+	apt-get install -y git make gcc g++ libmysqlclient-dev libssl-dev libbz2-dev libreadline-dev libncurses-dev libboost-all-dev p7zip docker-ce; \
     	\
-	update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100
-	update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang 100
-	rm -rf /var/lib/apt/lists/*
+	update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100;
+	update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang 100;
+	
+	tee /etc/docker/daemon.json <<-'EOF'
+	{
+	  "registry-mirrors": [
+		"https://docker.m.daocloud.io",
+		"https://dockerhub.azk8s.cn",
+		"https://dockerproxy.net",
+		"https://docker.anyhub.us.kg",
+		"https://docker.chenby.cn",
+		"https://dockerhub.jobcher.com",
+		"https://docker.211678.top",
+		"https://docker.1panel.live"
+	  ]
+	}
+	EOF; \
+	rm -rf /var/lib/apt/lists/*; \
+	rm /tmp/* -rf
+
+RUN set -eux; \
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash; \
+	curl -LsSf https://astral.sh/uv/install.sh | sh
+
 
 
 CMD ["base"]
