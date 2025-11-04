@@ -1,61 +1,70 @@
-FROM debian:13
+FROM debian:trixie-slim
 
 LABEL maintainer="lzh1104 <wwwlzhcom@163.com>"
 
-RUN apt-get -y install apt-transport-https ca-certificates curl software-properties-common
-
 RUN set -eux; \
-	cp /etc/apt/sources.list /etc/apt/sources.list.bak; \
-	tee /etc/apt/sources.list <<-'EOF'
-	# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
-	deb http://mirrors.tencent.com/debian/ trixie main contrib non-free non-free-firmware
-	deb-src http://mirrors.tencent.com/debian/ trixie main contrib non-free non-free-firmware
-
-	deb http://mirrors.tencent.com/debian/ trixie-updates main contrib non-free non-free-firmware
-	deb-src http://mirrors.tencent.com/debian/ trixie-updates main contrib non-free non-free-firmware
-
-	deb http://mirrors.tencent.com/debian/ trixie-backports main contrib non-free non-free-firmware
-	deb-src http://mirrors.tencent.com/debian/ trixie-backports main contrib non-free non-free-firmware
-
-	# 以下安全更新软件源包含了官方源与镜像站配置，如有需要可自行修改注释切换
-	deb http://mirrors.tencent.com/debian-security trixie-security main contrib non-free non-free-firmware
-	deb-src http://mirrors.tencent.com/debian-security trixie-security main contrib non-free non-free-firmware
-	EOF; \
-	
-	curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/debian/gpg | sudo apt-key add -; \
-	add-apt-repository "deb [arch=amd64] https://mirrors.aliyun.com/docker-ce/linux/debian $(lsb_release -cs) stable"
-
-
-RUN set -eux; \
-	\
-	wget https://dev.mysql.com/get/mysql-apt-config_0.8.29-1_all.deb -O /tmp/mysql-apt-config_all.deb; \
-	DEBIAN_FRONTEND=noninteractive dpkg -i /tmp/mysql-apt-config_all.deb; \
 	apt-get update; \
-	apt-get install -y build-essential cmake cppcheck valgrind clang lldb llvm gdb tar curl zip unzip pkg-config bash-completion ninja-build git make gcc g++ libmysqlclient-dev libssl-dev libbz2-dev libreadline-dev libncurses-dev libboost-all-dev p7zip docker-ce; \
+	apt-get -y install apt-transport-https ca-certificates curl lsb-release wget gnupg
+
+RUN cp /etc/apt/sources.list.d/debian.sources /etc/apt/sources.list.d/debian.sources.bak && \
+	tee /etc/apt/sources.list.d/debian.sources <<-'EOF'
+Types: deb deb-src
+URIs: https://mirrors.aliyun.com/debian/
+Suites: trixie trixie-updates trixie-backports
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+Types: deb deb-src
+URIs: https://mirrors.aliyun.com/debian-security/
+Suites: trixie-security
+Components: main contrib non-free non-free-firmware
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+
+Types: deb
+URIs: https://mirrors.aliyun.com/docker-ce/linux/debian
+Suites: trixie
+Components: stable
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+RUN set -eux; \
+	curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/debian/gpg -o /etc/apt/keyrings/docker.asc; \
+	chmod a+r /etc/apt/keyrings/docker.asc; \
+	\
+	apt-get update; \
+	apt-get install -y build-essential cmake cppcheck valgrind clang lldb llvm gdb tar curl zip unzip pkg-config bash-completion ninja-build git make gcc g++ libssl-dev libbz2-dev libreadline-dev libncurses-dev libboost-all-dev p7zip docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin; \
     	\
-	update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100;
-	update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang 100;
-	
-	tee /etc/docker/daemon.json <<-'EOF'
-	{
-	  "registry-mirrors": [
-		"https://docker.m.daocloud.io",
-		"https://dockerhub.azk8s.cn",
-		"https://dockerproxy.net",
-		"https://docker.anyhub.us.kg",
-		"https://docker.chenby.cn",
-		"https://dockerhub.jobcher.com",
-		"https://docker.211678.top",
-		"https://docker.1panel.live"
-	  ]
-	}
-	EOF; \
+	update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100; \
+	update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang 100; \
+	\
+	cd /tmp; \
+	wget https://dev.mysql.com/get/Downloads/MySQL-8.4/mysql-server_8.4.7-1debian13_amd64.deb-bundle.tar -O mysql-server_8.4.7-1debian13_amd64.deb-bundle.tar; \
+	tar -xvf mysql-server_8.4.7-1debian13_amd64.deb-bundle.tar; \
+	DEBIAN_FRONTEND=noninteractive dpkg -i libmysqlclient24_8.4.7-1debian13_amd64.deb libmysqlclient-dev_8.4.7-1debian13_amd64.deb mysql-client_8.4.7-1debian13_amd64.deb mysql-common_8.4.7-1debian13_amd64.deb mysql-community-client_8.4.7-1debian13_amd64.deb mysql-community-client-core_8.4.7-1debian13_amd64.deb mysql-community-client-plugins_8.4.7-1debian13_amd64.deb; \
+	\
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash; \
+	curl -LsSf https://astral.sh/uv/install.sh | sh; \
+	\
+	apt-get dist-clean; \
+	\ 
 	rm -rf /var/lib/apt/lists/*; \
 	rm /tmp/* -rf
-
-RUN set -eux; \
-	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash; \
-	curl -LsSf https://astral.sh/uv/install.sh | sh
+	
+RUN tee /etc/docker/daemon.json <<-'EOF'
+{
+  "registry-mirrors": [
+	"https://i51cxo5a.mirror.aliyuncs.com",
+	"https://docker.m.daocloud.io",
+	"https://dockerhub.azk8s.cn",
+	"https://dockerproxy.net",
+	"https://docker.anyhub.us.kg",
+	"https://docker.chenby.cn",
+	"https://dockerhub.jobcher.com",
+	"https://docker.211678.top",
+	"https://docker.1panel.live"
+  ]
+}
+EOF
 
 
 
