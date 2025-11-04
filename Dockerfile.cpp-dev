@@ -1,0 +1,35 @@
+FROM mcr.microsoft.com/devcontainers/cpp:dev-debian-13
+
+LABEL maintainer="lzh1104 <wwwlzhcom@163.com>"
+
+RUN set -eux; \
+	cp /etc/apt/sources.list /etc/apt/sources.list.bak; \
+	tee /etc/apt/sources.list <<-'EOF'
+	# 默认注释了源码镜像以提高 apt update 速度，如有需要可自行取消注释
+	deb http://mirrors.tencent.com/debian/ trixie main contrib non-free non-free-firmware
+	deb-src http://mirrors.tencent.com/debian/ trixie main contrib non-free non-free-firmware
+
+	deb http://mirrors.tencent.com/debian/ trixie-updates main contrib non-free non-free-firmware
+	deb-src http://mirrors.tencent.com/debian/ trixie-updates main contrib non-free non-free-firmware
+
+	deb http://mirrors.tencent.com/debian/ trixie-backports main contrib non-free non-free-firmware
+	deb-src http://mirrors.tencent.com/debian/ trixie-backports main contrib non-free non-free-firmware
+
+	# 以下安全更新软件源包含了官方源与镜像站配置，如有需要可自行修改注释切换
+	deb http://mirrors.tencent.com/debian-security trixie-security main contrib non-free non-free-firmware
+	deb-src http://mirrors.tencent.com/debian-security trixie-security main contrib non-free non-free-firmware
+	EOF; \
+	
+RUN set -eux; \
+	\
+	wget https://dev.mysql.com/get/mysql-apt-config_0.8.29-1_all.deb -O /tmp/mysql-apt-config_all.deb; \
+	DEBIAN_FRONTEND=noninteractive dpkg -i /tmp/mysql-apt-config_all.deb; \
+	apt-get update; \
+	apt-get install -y git make gcc g++ libmysqlclient-dev libssl-dev libbz2-dev libreadline-dev libncurses-dev libboost-all-dev p7zip; \
+    	\
+	update-alternatives --install /usr/bin/cc cc /usr/bin/clang 100
+	update-alternatives --install /usr/bin/c++ c++ /usr/bin/clang 100
+	rm -rf /var/lib/apt/lists/*
+
+
+CMD ["base"]
