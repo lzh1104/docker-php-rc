@@ -68,7 +68,7 @@ RUN set -eux; \
     pecl install apcu; \
     pecl install protobuf; \
     docker-php-ext-install bcmath exif ffi \
-        mysqli pcntl pdo_mysql pgsql pdo_pgsql shmop soap sockets sysvsem opcache zip; \
+        mysqli pcntl pdo_mysql pgsql pdo_pgsql shmop soap sockets sysvsem zip; \
     docker-php-ext-configure gd --with-libdir=/usr/include --with-avif --with-webp --with-jpeg --with-freetype; \
     docker-php-ext-install gd; \
 #    pecl install imagick; \
