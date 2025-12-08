@@ -10,7 +10,7 @@ ARG SWOOLE_VERSION
 ARG SWOW_VERSION
 ARG USE_SWOW
 
-ENV SWOOLE_V=${SWOOLE_VERSION:-6.0.2}
+ENV SWOOLE_V=${SWOOLE_VERSION:-6.1.4}
 ENV SWOW_V=${SWOW_VERSION:-1.5.3}
 ENV USE_SWOW_E=${USE_SWOW:+swow}
 
@@ -82,7 +82,7 @@ RUN set -eux; \
     docker-php-ext-enable memcached mongodb; \
 	if [ "$USE_SWOW_E" != "swow" ]; then \
 		pecl install -D 'enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes" enable-swoole-sqlite="yes" enable-swoole-pgsql="yes" enable-swoole-thread="yes" ' swoole; \
-		# cd /tmp && pecl download "swoole-$SWOW_V" && tar xzvf "swoole-$SWOW_V.tgz" && cd "swoole-$SWOW_V" && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install; \
+		# cd /tmp && pecl download "swoole-$SWOOLE_V" && tar xzvf "swoole-$SWOOLE_V.tgz" && cd "swoole-$SWOOLE_V" && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install; \
 		docker-php-ext-enable swoole; \
 		echo "swoole.use_shortname=off" >> /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
 	else \
