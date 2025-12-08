@@ -1,0 +1,135 @@
+FROM php:8.5-zts-trixie
+
+LABEL maintainer="lzh1104 <wwwlzhcom@163.com>"
+
+# WORKDIR /var/www/html
+
+# use mirror tsinghua
+
+ARG SWOOLE_VERSION
+ARG SWOW_VERSION
+ARG USE_SWOW
+
+ENV SWOOLE_V=${SWOOLE_VERSION:-6.1.4}
+ENV SWOW_V=${SWOW_VERSION:-1.5.3}
+ENV USE_SWOW_E=${USE_SWOW:+swow}
+
+RUN set -eux; \
+	\
+	apt-get update; \
+	apt-get install -y --no-install-recommends procps\
+			libvips42 \
+			libffi-dev \
+			libexif-dev \
+			libheif-dev \
+        	libssl-dev \
+			zip \
+			unzip \
+			protobuf-compiler \
+	# swoole enable c-ares
+        	libc-ares-dev \
+        	libmcrypt-dev \
+        	libxml2-dev \
+        	libzip-dev \
+        	libmemcached-dev \
+        	libsqlite3-dev \
+        	libavif-dev libgd-dev libpng-dev \
+        	libwebp-dev libjpeg-dev \
+			libpq-dev \
+        	libfreetype-dev libcurl4-openssl-dev; \
+    	\
+	rm -rf /var/lib/apt/lists/*
+
+RUN set -eux; \
+    \
+    savedAptMark="$(apt-mark showmanual)"; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends tzdata; \
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
+    echo "Asia/Shanghai" > /etc/timezone; \
+    apt-get install -y --no-install-recommends \
+        $PHPIZE_DEPS \
+        # linux-headers \
+        ; \
+	\
+    gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
+    debMultiarch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"; \
+    cd /tmp && \
+    wget https://github.com/emcrisostomo/fswatch/releases/download/1.18.3/fswatch-1.18.3.tar.gz \
+    && tar -xzvf fswatch-1.18.3.tar.gz \
+    && cd fswatch-1.18.3 \
+    && ./configure --build="$gnuArch" --prefix=/usr && make && make install \
+    && rm /tmp/fswatch-1.18.3 -rf; \
+    export CFLAGS="$PHP_CFLAGS" \
+        CPPFLAGS="$PHP_CPPFLAGS" \
+        LDFLAGS="$PHP_LDFLAGS" \
+	; \
+    pecl install redis; \
+    pecl install apcu; \
+    pecl install protobuf; \
+    docker-php-ext-install bcmath exif ffi \
+        mysqli pcntl pdo_mysql pgsql pdo_pgsql shmop soap sockets sysvsem opcache zip; \
+    docker-php-ext-configure gd --with-libdir=/usr/include --with-avif --with-webp --with-jpeg --with-freetype; \
+    docker-php-ext-install gd; \
+#    pecl install imagick; \
+    pecl install memcached; \
+    pecl install mongodb; \
+#    pecl install xdebug; \
+	echo "zend.max_allowed_stack_size=-1\nffi.enable=true" > /usr/local/etc/php/conf.d/10-ffi.ini; \
+    docker-php-ext-enable redis apcu protobuf; \
+# https://pecl.php.net/package/imagick
+#    docker-php-ext-enable imagick; \
+    docker-php-ext-enable memcached mongodb; \
+	if [ "$USE_SWOW_E" != "swow" ]; then \
+		pecl install -D 'enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes" enable-swoole-sqlite="yes" enable-swoole-pgsql="yes" enable-swoole-thread="yes" ' swoole; \
+		# cd /tmp && pecl download "swoole-$SWOOLE_V" && tar xzvf "swoole-$SWOOLE_V.tgz" && cd "swoole-$SWOOLE_V" && phpize && ./configure --enable-sockets --enable-openssl --enable-mysqlnd --enable-swoole-json && make && make install; \
+		docker-php-ext-enable swoole; \
+		echo "swoole.use_shortname=off" >> /usr/local/etc/php/conf.d/docker-php-ext-swoole.ini; \
+	else \
+
+# https://github.com/swow/swow 
+# swow 和 swoole 不能共存
+		curl -o swow.tar.gz -fL "https://github.com/swow/swow/archive/refs/tags/v$SWOW_V.tar.gz"; \
+		tar -xzf swow.tar.gz -C /tmp/; \
+		rm swow.tar.gz; \
+		cd "/tmp/swow-$SWOW_V/ext" && phpize && ./configure && make && make install; \
+		docker-php-ext-enable swow; \
+	fi; \
+# Chane TimeZone
+    cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini; \
+#   && cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini \
+    sed -i 's/;date.timezone =/date.timezone = "Asia\/Shanghai"/g' $PHP_INI_DIR/php.ini; \
+	\
+# delete php source	
+	docker-php-source delete; \
+# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
+	apt-mark auto '.*' > /dev/null; \
+	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
+	find /usr/local -type f -executable -exec ldd '{}' ';' \
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
+		| sort -u \
+		| xargs -r dpkg-query --search \
+		| cut -d: -f1 \
+		| sort -u \
+		| xargs -r apt-mark manual \
+	; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	rm -rf /var/lib/apt/lists/*; \
+	\
+# update pecl channel definitions https://github.com/docker-library/php/issues/443
+	pecl update-channels; \
+	rm -rf /tmp/pear ~/.pearrc; \
+	\
+    rm /tmp/* -rf
+
+# install composer
+RUN curl -sS https://getcomposer.org/installer | php \
+    && mv composer.phar /usr/local/bin/composer && composer config -g repos.packagist composer https://mirrors.tencent.com/composer/
+
+# install roadrunner
+RUN curl --proto '=https' --tlsv1.2 -sSf  https://raw.githubusercontent.com/roadrunner-server/roadrunner/master/download-latest.sh | sh
+
+
+WORKDIR /var/www/html
+
+CMD ["base"]
