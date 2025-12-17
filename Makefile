@@ -38,3 +38,15 @@ test:
 8.3-zts:
 	$(DOCKERBUILD) -f Dockerfile.8.3-zts -t $(IMAGES_NAME):8.3-zts .
 	# $(DOCKERPUSH) $(IMAGES_NAME):8.3-zts
+
+8.4-zts:
+	$(DOCKERBUILD) -f Dockerfile.8.4-zts -t $(IMAGES_NAME):8.4-zts .
+	# $(DOCKERPUSH) $(IMAGES_NAME):8.4-zts
+
+8.5-zts:
+	$(DOCKERBUILD) -f Dockerfile.8.5-zts -t $(IMAGES_NAME):8.5-zts .
+	# $(DOCKERPUSH) $(IMAGES_NAME):8.5-zts
+
+8.5-fpm:
+	$(DOCKERBUILD) -f Dockerfile.8.5-fpm -t $(IMAGES_NAME):8.5-fpm .
+	# $(DOCKERPUSH) $(IMAGES_NAME):8.5-fpm
