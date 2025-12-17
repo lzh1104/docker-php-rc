@@ -5,21 +5,19 @@ LABEL maintainer="lzh1104 <wwwlzhcom@163.com>"
 # WORKDIR /var/www/html
 
 # use mirror tsinghua
-
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 
 RUN set -eux; \
-	\
-	apt-get update; \
-	apt-get install -y --no-install-recommends procps\
+    \
+    savedAptMark="$(apt-mark showmanual)"; \
+    apt-get update; \
+	apt-get install -y --no-install-recommends $PHPIZE_DEPS \
+		tzdata procps\
 			libvips42 \
-			libffi-dev \
-			libexif-dev \
-			libheif-dev \
-        	libssl-dev \
-			zip \
-			unzip \
+			libffi-dev libexif-dev \
+			libheif-dev libssl-dev \
+			zip unzip \
 			protobuf-compiler \
-			
         	libmcrypt-dev \
         	libxml2-dev \
         	libzip-dev \
@@ -29,20 +27,9 @@ RUN set -eux; \
         	libwebp-dev libjpeg-dev \
 			libpq-dev \
         	libfreetype-dev libcurl4-openssl-dev; \
-    	\
-	rm -rf /var/lib/apt/lists/*
-
-RUN set -eux; \
     \
-    savedAptMark="$(apt-mark showmanual)"; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends tzdata; \
     ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
     echo "Asia/Shanghai" > /etc/timezone; \
-    apt-get install -y --no-install-recommends \
-        $PHPIZE_DEPS \
-        # linux-headers \
-        ; \
 	\
     gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
     debMultiarch="$(dpkg-architecture --query DEB_BUILD_MULTIARCH)"; \
@@ -74,19 +61,21 @@ RUN set -eux; \
 	\
 # delete php source	
 	docker-php-source delete; \
+	\
 # reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
 	apt-mark auto '.*' > /dev/null; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
-		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
 		| sort -u \
-		| xargs -r dpkg-query --search \
-		| cut -d: -f1 \
+		| xargs -rt dpkg-query --search \
+# https://manpages.debian.org/trixie/dpkg/dpkg-query.1.en.html#S (we ignore diversions and it'll be really unusual for more than one package to provide any given .so file)
+		| awk 'sub(":$", "", $1) { print $1 }' \
 		| sort -u \
 		| xargs -r apt-mark manual \
 	; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-	rm -rf /var/lib/apt/lists/*; \
+	apt-get dist-clean; \
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
@@ -96,4 +85,4 @@ RUN set -eux; \
 
 # install composer
 RUN curl -sS https://getcomposer.org/installer | php \
-    && mv composer.phar /usr/local/bin/composer && composer config -g repos.packagist composer https://mirrors.tencent.com/composer/
+    && mv composer.phar /usr/local/bin/composer
