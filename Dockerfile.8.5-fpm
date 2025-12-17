@@ -5,7 +5,7 @@ LABEL maintainer="lzh1104 <wwwlzhcom@163.com>"
 # WORKDIR /var/www/html
 
 # use mirror tsinghua
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list.d/debian.sources
 
 RUN set -eux; \
     \
