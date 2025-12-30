@@ -99,7 +99,7 @@ RUN set -eux; \
 	rm -rf libiconv-1.18; \
 	rm -rf libiconv-1.18.tar.gz
 
-COPY docker-php-source /usr/local/bin/
+COPY docker-php-source /usr/local/bin/ && chmod +x /usr/local/bin/docker-php-source
 
 RUN set -eux; \
 	\
@@ -215,7 +215,7 @@ RUN set -eux; \
 # smoke test
 	php --version
 
-COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
+COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/ && chmod +x /usr/local/bin/docker-php-ext-* /usr/local/bin/docker-php-entrypoint
 
 # enable OPcache by default (https://wiki.php.net/rfc/make_opcache_required)
 RUN docker-php-ext-enable opcache
