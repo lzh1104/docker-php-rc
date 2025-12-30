@@ -29,9 +29,7 @@ ENV PHPIZE_DEPS \
 RUN set -eux; \
 	dnf install -y \
 		$PHPIZE_DEPS \
-		curl \
-	; \
-	dnf clean all
+		curl
 
 ENV PHP_INI_DIR /usr/local/etc/php
 RUN set -eux; \
@@ -63,7 +61,6 @@ ENV PHP_SHA256="f7950ca034b15a78f5de9f1b22f4d9bad1dd497114d175cb1672a4ca78077af5
 RUN set -eux; \
 	\
 	dnf install -y gnupg; \
-	dnf clean all; \
 	\
 	mkdir -p /usr/src; \
 	cd /usr/src; \
@@ -99,7 +96,8 @@ RUN set -eux; \
 	rm -rf libiconv-1.18; \
 	rm -rf libiconv-1.18.tar.gz
 
-COPY docker-php-source /usr/local/bin/ && chmod +x /usr/local/bin/docker-php-source
+COPY docker-php-source /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-php-source
 
 RUN set -eux; \
 	\
@@ -165,7 +163,7 @@ RUN set -eux; \
 		--with-sqlite3=/usr \
 		\
 		--with-curl \
-		--with-iconv=/usr \
+		--with-iconv=/usr/local/libiconv \
 		--with-openssl \
 		--with-readline \
 		--with-zlib \
@@ -215,7 +213,8 @@ RUN set -eux; \
 # smoke test
 	php --version
 
-COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/ && chmod +x /usr/local/bin/docker-php-ext-* /usr/local/bin/docker-php-entrypoint
+COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-php-ext-* /usr/local/bin/docker-php-entrypoint
 
 # enable OPcache by default (https://wiki.php.net/rfc/make_opcache_required)
 RUN docker-php-ext-enable opcache
