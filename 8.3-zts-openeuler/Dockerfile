@@ -89,15 +89,15 @@ RUN set -eux; \
 RUN set -eux; \
 	\
 	cd /usr/src; \
-	curl -fsSL -o libiconv-1.14.tar.gz https://mirrors.aliyun.com/gnu/libiconv/libiconv-1.14.tar.gz; \
-	tar -zxvf libiconv-1.14.tar.gz; \
-	cd libiconv-1.14; \
+	curl -fsSL -o libiconv-1.18.tar.gz https://mirrors.aliyun.com/gnu/libiconv/libiconv-1.18.tar.gz; \
+	tar -zxvf libiconv-1.18.tar.gz; \
+	cd libiconv-1.18; \
 	./configure --prefix=/usr; \
 	make; \
 	make install; \
 	cd ..; \
-	rm -rf libiconv-1.14; \
-	rm -rf libiconv-1.14.tar.gz
+	rm -rf libiconv-1.18; \
+	rm -rf libiconv-1.18.tar.gz
 
 COPY docker-php-source /usr/local/bin/
 
