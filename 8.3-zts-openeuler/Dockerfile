@@ -86,6 +86,19 @@ RUN set -eux; \
 	dnf remove -y $(rpm -qa | grep -v '^gpg\|^shadow\|^ca-certificates') || :
 	# Handle package removal for build dependencies
 
+RUN set -eux; \
+	\
+	cd /usr/src; \
+	curl -fsSL -o libiconv-1.14.tar.gz https://mirrors.aliyun.com/gnu/libiconv/libiconv-1.14.tar.gz; \
+	tar -zxvf libiconv-1.14.tar.gz; \
+	cd libiconv-1.14; \
+	./configure --prefix=/usr; \
+	make; \
+	make install; \
+	cd ..; \
+	rm -rf libiconv-1.14; \
+	rm -rf libiconv-1.14.tar.gz
+
 COPY docker-php-source /usr/local/bin/
 
 RUN set -eux; \
@@ -93,8 +106,8 @@ RUN set -eux; \
 	dnf install -y \
 		libargon2-devel \
 		libcurl-devel \
-		libonig-devel \
 		readline-devel \
+		oniguruma-devel \
 		libsodium-devel \
 		sqlite-devel \
 		openssl-devel \
@@ -152,7 +165,7 @@ RUN set -eux; \
 		--with-sqlite3=/usr \
 		\
 		--with-curl \
-		--with-iconv \
+		--with-iconv=/usr \
 		--with-openssl \
 		--with-readline \
 		--with-zlib \
