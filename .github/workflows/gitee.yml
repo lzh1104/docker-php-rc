@@ -1,7 +1,8 @@
 name: Sync to Gitee
 
 on:
-  push
+  workflow_dispatch
+  # push
 
 jobs:
   run:
