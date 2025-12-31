@@ -23,7 +23,8 @@ ENV PHPIZE_DEPS \
 		gcc \
 		glibc-devel \
 		pkgconfig \
-		shadow-utils
+		shadow-utils \
+		diffutils
 
 # persistent / runtime deps
 RUN set -eux; \
@@ -163,7 +164,7 @@ RUN set -eux; \
 		--with-sqlite3=/usr \
 		\
 		--with-curl \
-		--with-iconv=/usr/local/libiconv \
+		--with-iconv=/usr/bin \
 		--with-openssl \
 		--with-readline \
 		--with-zlib \
