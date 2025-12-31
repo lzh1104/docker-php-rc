@@ -24,7 +24,8 @@ ENV PHPIZE_DEPS \
 		glibc-devel \
 		pkgconfig \
 		shadow-utils \
-		diffutils
+		diffutils \
+		util-linux
 
 # persistent / runtime deps
 RUN set -eux; \
