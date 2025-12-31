@@ -205,7 +205,7 @@ RUN set -eux; \
 	cd /; \
 	docker-php-source delete; \
 	\
-	dnf remove -y $(rpm -qa | grep -v '^gpg\|^curl\|^xz\|^ca-certificates\|^libargon2\|^libcurl\|^readline\|^libsodium\|^sqlite\|^openssl\|^libxml2\|^zlib') || : ; \
+	dnf remove -y $(rpm -qa | grep -v '^gpg\|^curl\|^xz\|^ca-certificates\|^libargon2\|^libcurl\|^readline\|^libsodium\|^sqlite\|^openssl\|^libxml2\|^zlib') --exclude=python3-dnf --exclude=setup || : ; \
 	dnf clean all; \
 	\
 # update pecl channel definitions https://github.com/docker-library/php/issues/443
