@@ -36,7 +36,7 @@ RUN set -eux; \
         	libavif-dev libgd-dev libpng-dev \
         	libwebp-dev libjpeg-dev \
 			libpq-dev \
-        	libfreetype-dev libcurl4-openssl-dev; \
+        	libfreetype-dev libcurl4-openssl-dev liburing-dev; \
     	\
 	rm -rf /var/lib/apt/lists/*
 
