@@ -30,14 +30,6 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       -
-        name: Login to cr.console.aliyun.com
-        uses: docker/login-action@v4
-        with:
-          registry: registry.cn-hangzhou.aliyuncs.com
-          username: ${{ secrets.DOCKER_ALIYUN_USERNAME }}
-          password: ${{ secrets.DOCKER_ALIYUN_PASSWORD }}
-
-      -
         name: Login to GitHub Container Registry
         uses: docker/login-action@v4
         with:
@@ -53,5 +45,4 @@ jobs:
           push: true
           tags: |
             lzh1104/php-rc:8.3-zts
-            registry.cn-hangzhou.aliyuncs.com/lzh1104/php-rc:8.3-zts
             ghcr.io/lzh1104/php-rc:8.3-zts
