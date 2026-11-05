@@ -53,6 +53,12 @@ jobs:
           context: .
           file: Dockerfile.8.2-fpm
           push: true
+          # 阿里云 ACR 个人版不支持 OCI 1.1 artifact（provenance/SBOM 的 empty config），
+          # 关闭 attestation 并强制 Docker schema2 media type，否则推送报
+          # unknown manifest class for application/vnd.oci.empty.v1+json
+          provenance: false
+          sbom: false
+          oci-mediatypes: false
           tags: |
             lzh1104/php-rc:8.2-fpm
             registry.cn-hangzhou.aliyuncs.com/lzh1104/php-rc:8.2-fpm
@@ -67,6 +73,10 @@ jobs:
           context: .
           file: Dockerfile.8.2-fpm
           push: true
+          # 同上：阿里云 ACR 个人版需要 Docker schema2 + 无 attestation
+          provenance: false
+          sbom: false
+          oci-mediatypes: false
           tags: |
             lzh1104/php-rc:8.2-fpm-swow
             registry.cn-hangzhou.aliyuncs.com/lzh1104/php-rc:8.2-fpm-swow

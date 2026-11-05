@@ -34,5 +34,10 @@ jobs:
           context: .
           file: Dockerfile.cpp-dev
           push: true
+          # 阿里云 ACR 个人版不支持 OCI 1.1 artifact（provenance/SBOM 的 empty config），
+          # 关闭 attestation 并强制 Docker schema2 media type。
+          provenance: false
+          sbom: false
+          oci-mediatypes: false
           tags: |
             registry.cn-hangzhou.aliyuncs.com/lzh1104/php-rc:cpp-dev

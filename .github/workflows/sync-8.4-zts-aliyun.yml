@@ -1,0 +1,103 @@
+## 同步 Docker Hub 上已构建好的 8.4-zts 镜像到阿里云镜像仓库
+##
+## 为什么不用 `docker buildx imagetools create` 直接复制：
+##   新版 BuildKit 构建的镜像索引里含有 provenance/SBOM attestation
+##   （platform=unknown/unknown，config media type 为
+##   application/vnd.oci.empty.v1+json）。imagetools create 会把整个索引
+##   原样搬运过去，而阿里云 ACR 个人版（registry.cn-*.aliyuncs.com）
+##   不支持 OCI 1.1 artifact，会在 push manifest 阶段直接拒绝：
+##     denied: unknown manifest class for application/vnd.oci.empty.v1+json
+##   且 skopeo copy --all 同样「全有或全无」，无法只搬平台镜像。
+##
+## 因此这里改成「用一个空 Dockerfile 引用源镜像，再用 buildx 以
+## oci-mediatypes=false + 无 attestation 重新输出」的方式：
+##   - 不重新构建任何层（FROM 已是成品镜像），层的 digest 原样复用；
+##   - 输出的是干净的 Docker schema2 单平台 manifest，ACR 个人版可接收。
+
+name: sync 8.4-zts to aliyun
+
+## 手动调度
+on:
+  workflow_dispatch:
+    inputs:
+      source_tag:
+        description: '源镜像 tag（Docker Hub: lzh1104/php-rc）'
+        required: false
+        default: '8.4-zts'
+      target_tag:
+        description: '目标镜像 tag（阿里云），留空则与源 tag 相同'
+        required: false
+        default: ''
+      platform:
+        description: '要同步的平台（ACR 个人版不支持多架构索引）'
+        required: false
+        default: 'linux/amd64'
+
+jobs:
+
+  sync:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    env:
+      SRC_IMAGE: lzh1104/php-rc
+      DST_IMAGE: registry.cn-hangzhou.aliyuncs.com/lzh1104/php-rc
+
+    steps:
+      - name: Resolve tags
+        id: tags
+        run: |
+          SRC_TAG="${{ github.event.inputs.source_tag }}"
+          DST_TAG="${{ github.event.inputs.target_tag }}"
+          if [ -z "$SRC_TAG" ]; then SRC_TAG="8.4-zts"; fi
+          if [ -z "$DST_TAG" ]; then DST_TAG="$SRC_TAG"; fi
+          echo "src=${SRC_IMAGE}:${SRC_TAG}" >> "$GITHUB_OUTPUT"
+          echo "dst=${DST_IMAGE}:${DST_TAG}" >> "$GITHUB_OUTPUT"
+          echo "source -> ${SRC_IMAGE}:${SRC_TAG}"
+          echo "target -> ${DST_IMAGE}:${DST_TAG}"
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Login to cr.console.aliyun.com
+        uses: docker/login-action@v4
+        with:
+          registry: registry.cn-hangzhou.aliyuncs.com
+          username: ${{ secrets.DOCKER_ALIYUN_USERNAME }}
+          password: ${{ secrets.DOCKER_ALIYUN_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Inspect source image
+        run: |
+          docker buildx imagetools inspect "${{ steps.tags.outputs.src }}"
+
+      - name: Re-push image to Aliyun (schema2, no attestation)
+        run: |
+          mkdir -p .sync-context
+          printf 'FROM %s\n' "${{ steps.tags.outputs.src }}" > .sync-context/Dockerfile
+          cat .sync-context/Dockerfile
+          docker buildx build \
+            --platform "${{ github.event.inputs.platform }}" \
+            --provenance=false \
+            --sbom=false \
+            --output "type=image,name=${{ steps.tags.outputs.dst }},push=true,oci-mediatypes=false" \
+            -f .sync-context/Dockerfile \
+            .sync-context
+
+      - name: Verify target manifest
+        run: |
+          RAW="$(docker buildx imagetools inspect --raw "${{ steps.tags.outputs.dst }}")"
+          echo "$RAW" | head -c 600
+          echo
+          if echo "$RAW" | grep -q 'vnd.oci.empty.v1'; then
+            echo "::error::目标 manifest 仍含 OCI empty descriptor，ACR 个人版会拒绝"
+            exit 1
+          fi
+          echo "OK: 目标 manifest 为 Docker schema2，不含 OCI artifact"
